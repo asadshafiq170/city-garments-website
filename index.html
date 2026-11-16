@@ -925,7 +925,15 @@ footer li a{display:inline-block;padding:4px 0}
     <div class="wrap">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#top">Home</a> <span>/</span> <span>Checkout</span></nav>
       <h1 class="co-title">Checkout</h1>
-      <form class="co-grid" id="coForm" novalidate>
+      <form class="co-grid" id="coForm" name="order" method="POST"
+            data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="order">
+        <p hidden><label>Leave this empty: <input name="bot-field"></label></p>
+        <input type="hidden" name="order_no" id="hOrderNo">
+        <input type="hidden" name="items" id="hItems">
+        <input type="hidden" name="subtotal" id="hSubtotal">
+        <input type="hidden" name="delivery" id="hDelivery">
+        <input type="hidden" name="total" id="hTotal">
         <div class="co-main">
           <fieldset class="co-block first">
             <legend>1 &middot; Contact</legend>
@@ -1031,7 +1039,7 @@ footer li a{display:inline-block;padding:4px 0}
           <button class="btn ghost" id="okCopy">Copy order details</button>
           <a class="btn ghost" href="#c-all" style="text-align:center;text-decoration:none">Continue shopping</a>
         </div>
-        <p class="cart-note" style="margin-top:16px">WhatsApp should have opened with this order ready to send — press send there so we get it straight away. If it did not open, use the button above. Keep your order number for any message about this order.</p>
+        <p class="cart-note" style="margin-top:16px" id="okNote"></p>
       </div>
     </div>
   </section>
@@ -1333,6 +1341,7 @@ const PAY_LABEL = {cod:'Cash on Delivery', bank:'Bank transfer (advance)', walle
 let lastOrder = null;
 
 const coForm   = document.getElementById('coForm');
+let orderSent = true;
 const coCity   = document.getElementById('coCity');
 const coErr    = document.getElementById('coErr');
 
@@ -1440,13 +1449,43 @@ coForm.addEventListener('submit', e => {
   lastOrder = o;
   try { localStorage.setItem('cg_last_order', JSON.stringify(o)); } catch (err) {}
 
-  // hand the finished order to the shop's WhatsApp, nothing left for the customer to type
-  try { window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(orderMessage(o)), '_blank', 'noopener'); }
-  catch (err) {}
-
-  cart = []; saveCart(); renderCart();
-  location.hash = '#ordered';
+  sendOrder(o);
 });
+
+/* ---------- the order reaches the shop ----------
+   Netlify Forms records it and emails the shop. There is no server of our own, so if
+   that POST cannot go through the customer is handed straight to WhatsApp instead and
+   told to press send — an order is never silently lost. */
+function sendOrder(o){
+  document.getElementById('hOrderNo').value  = o.no;
+  document.getElementById('hItems').value    = o.items.map(i =>
+    i.code + ' ' + i.name + ' (' + i.colour + ') size ' + i.size + ' x' + i.qty).join(' | ');
+  document.getElementById('hSubtotal').value = rs(o.subtotal);
+  document.getElementById('hDelivery').value = o.delivery === null ? 'confirmed on call' : rs(o.delivery);
+  document.getElementById('hTotal').value    = o.delivery === null
+    ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
+
+  const btn = coForm.querySelector('button[type=submit]');
+  const label = btn ? btn.textContent : '';
+  if (btn){ btn.disabled = true; btn.textContent = 'Placing your order\u2026'; }
+
+  const land = ok => {
+    if (btn){ btn.disabled = false; btn.textContent = label; }
+    orderSent = ok;
+    cart = []; saveCart(); renderCart();
+    location.hash = '#ordered';
+    if (!ok){
+      try { window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(orderMessage(o)), '_blank', 'noopener'); }
+      catch (err) {}
+    }
+  };
+
+  fetch('/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams(new FormData(coForm)).toString()
+  }).then(r => land(r.ok)).catch(() => land(false));
+}
 
 function renderOk(o){
   document.getElementById('okNo').textContent = o.no;
@@ -1459,6 +1498,11 @@ function renderOk(o){
   const items = o.items.map(i => i.code + ' \u00b7 Size ' + i.size + ' \u00d7 ' + i.qty).join('<br>');
   const total = o.delivery === null ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
   const row = (k, v) => '<div class="ok-row"><span>' + k + '</span><span>' + v + '</span></div>';
+  document.getElementById('okNote').innerHTML = orderSent
+    ? 'Your order is with us. We will call you on ' + prettyPhone(o.phone) +
+      ' to confirm it before dispatch. Keep your order number for any message about this order.'
+    : '<b>We could not reach our system, so your order is not with us yet.</b> WhatsApp should have ' +
+      'opened with the whole order ready \u2014 press send there, or use the button above.';
   document.getElementById('okCard').innerHTML =
     row('Order', o.no) + row('Items', items) +
     row('Deliver to', esc(o.name) + '<br>' + prettyPhone(o.phone) + '<br>' + esc(o.address) + '<br>' + esc(o.city)) +
