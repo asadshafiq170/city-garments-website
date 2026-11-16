@@ -986,14 +986,10 @@ footer li a{display:inline-block;padding:4px 0}
                   <span class="pay-tag">Most popular</span></span>
               </label>
               <label class="pay-opt">
-                <input type="radio" name="pay" value="bank">
-                <span class="pay-body"><b>Bank transfer</b>
-                  <small>Pay in advance from your bank app. We send you the account title and number as soon as your order is placed.</small></span>
-              </label>
-              <label class="pay-opt">
                 <input type="radio" name="pay" value="wallet">
                 <span class="pay-body"><b>JazzCash / Easypaisa</b>
-                  <small>Pay in advance from your mobile wallet. We send you the account number as soon as your order is placed.</small></span>
+                  <small>Send the total to <b>0320 4130348</b> from your wallet app, then WhatsApp us the screenshot.
+                  The same number works on JazzCash and Easypaisa.</small></span>
               </label>
             </div>
           </fieldset>
@@ -1337,7 +1333,7 @@ document.getElementById('cartItems').addEventListener('click', e => {
 
 /* ---------- checkout ---------- */
 const CITY_DELIVERY = {'Lahore': LAHORE_DELIVERY};
-const PAY_LABEL = {cod:'Cash on Delivery', bank:'Bank transfer (advance)', wallet:'JazzCash / Easypaisa (advance)'};
+const PAY_LABEL = {cod:'Cash on Delivery', wallet:'JazzCash / Easypaisa (advance)'};
 let lastOrder = null;
 
 const coForm   = document.getElementById('coForm');
@@ -1493,7 +1489,8 @@ function renderOk(o){
   const advance = o.pay !== 'cod';
   document.getElementById('okLead').textContent = 'Thank you, ' + first + '. We will call you on ' +
     prettyPhone(o.phone) + ' to confirm stock and your address' +
-    (advance ? ', and send you the payment details on WhatsApp.' : '. Pay the rider when your parcel arrives.');
+    (advance ? '. Send the total to 0320 4130348 on JazzCash or Easypaisa and WhatsApp us the screenshot.'
+             : '. Pay the rider when your parcel arrives.');
 
   const items = o.items.map(i => i.code + ' \u00b7 Size ' + i.size + ' \u00d7 ' + i.qty).join('<br>');
   const total = o.delivery === null ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
