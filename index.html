@@ -277,11 +277,14 @@ section{scroll-margin-top:80px}
 .qa{border:1px solid var(--line);border-radius:999px;min-width:27px;padding:4px 7px;font-family:var(--font-display);
   font-size:10.5px;font-weight:600;line-height:1.1}
 .qa:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.qa[disabled]{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.qa[disabled]:hover{background:transparent;color:inherit;border-color:var(--line)}
 .swatches{display:flex;gap:4px;margin-bottom:2px}
 .dot{width:9px;height:9px;border-radius:50%;border:1px solid rgba(128,128,128,.4);display:block}
 .badge{position:absolute;top:10px;left:10px;border-radius:999px;background:var(--paper);color:var(--ink);font-family:var(--font-display);
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px}
 .badge.low{background:var(--sale);color:#fff}
+.badge.gone{background:#6b7075;color:#fff}
 .quick{position:absolute;left:0;right:0;bottom:0;padding:11px;background:var(--paper);
   font-family:var(--font-display);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
   transform:translateY(100%);transition:transform .25s ease;border-top:1px solid var(--line)}
@@ -450,6 +453,8 @@ body.lb-open{overflow:hidden}
   font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.08em;transition:border-color .18s,background .18s}
 .size:hover{border-color:var(--ink)}
 .size[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.size[disabled]{opacity:.38;text-decoration:line-through;cursor:not-allowed}
+.size[disabled]:hover{border-color:var(--line)}
 .spec{font-size:13px;color:var(--muted);margin:0}
 .spec b{color:var(--ink);font-weight:600}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
@@ -1143,7 +1148,7 @@ const PRODUCTS = [
 
   {code:'CG-S01', cat:'shackets', name:'Herringbone Shacket', colour:'Grey', price:4500, sizes:['M','L','XL','XXL'], img:'img/CG-S01-a.webp', alt:'img/CG-S01-b.webp', note:'Wool-blend overshirt with twin flap chest pockets.'},
   {code:'CG-S02', cat:'shackets', name:'Herringbone Shacket', colour:'Blue', price:4500, sizes:['M','L','XL','XXL'], img:'img/CG-S02-a.webp', alt:'img/CG-S02-b.webp', note:'Wool-blend overshirt with concealed front fastening.'},
-  {code:'CG-S03', cat:'shackets', name:'Plaid Zip Shacket', colour:'Navy / Teal', price:4500, sizes:['M','L','XL','XXL'], img:'img/CG-S03-a.webp', alt:'img/CG-S03-b.webp', note:'Full-zip check overshirt with snap-fastened chest pockets.'},
+  {code:'CG-S03', cat:'shackets', name:'Plaid Zip Shacket', colour:'Navy / Teal', price:4500, sizes:['M','L','XL','XXL'], out:['L'], img:'img/CG-S03-a.webp', alt:'img/CG-S03-b.webp', note:'Full-zip check overshirt with snap-fastened chest pockets.'},
   {code:'CG-S04', cat:'shackets', name:'Western Shacket', colour:'Light Grey', price:4500, sizes:['M','L','XL','XXL'], img:'img/CG-S04-a.webp', alt:'img/CG-S04-b.webp', note:'Western shoulder stitching, snap fastening, welt pockets.'},
   {code:'CG-S05', cat:'shackets', name:'Western Shacket', colour:'Blue', price:4500, sizes:['M','L','XL','XXL'], img:'img/CG-S05-a.webp', alt:'img/CG-S05-b.webp', note:'Western shoulder stitching, snap fastening, welt pockets.'},
 
@@ -1166,10 +1171,42 @@ const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matche
 const rs = n => 'Rs ' + n.toLocaleString('en-PK');
 const byCode = c => PRODUCTS.find(p => p.code === c);
 
+/* ---------- stock ----------
+   `out` lists the sizes of a product that are gone. A sold-out size still
+   shows everywhere, struck through and unclickable, so a customer sees the
+   piece exists and asks about it instead of assuming it never came in their
+   size. To mark one gone, add it to that product's `out` array above; to
+   bring it back, take it out. This array is the ONLY place stock lives --
+   stock-register.csv is the shop's paper record and does not drive the site,
+   so the two must be changed together. */
+const outOf     = p => p.out || [];
+const isOut     = (p, s) => outOf(p).indexOf(s) !== -1;
+const liveSizes = p => p.sizes.filter(s => !isOut(p, s));
+const allGone   = p => liveSizes(p).length === 0;
+
+function stockLine(p){
+  const live = liveSizes(p);
+  if (!live.length)
+    return 'Sold out for now. Message us and we will tell you when it is back.';
+  if (p.sizes.length === 1)
+    return 'One pair only, size ' + p.sizes[0] + '. We confirm it is still here before you pay.';
+  if (live.length < p.sizes.length)
+    return 'Only ' + live.join(', ') + ' left. We confirm your size before you pay.';
+  return 'Sizes ' + p.sizes[0] + ' to ' + p.sizes[p.sizes.length - 1] +
+    '. We confirm your size is in stock before you pay.';
+}
+
 /* ---------- cart state ---------- */
 let cart = [];
 try { const s = localStorage.getItem('cg-cart'); if (s) cart = JSON.parse(s) || []; } catch (e) { cart = []; }
 function saveCart(){ try { localStorage.setItem('cg-cart', JSON.stringify(cart)); } catch (e) {} }
+/* A bag kept in this browser from before a size sold out must not survive
+   into checkout, and the pruned bag is written back so the stored copy and
+   what the shopper sees never drift apart. */
+(function pruneCart(){
+  const kept = cart.filter(l => { const p = byCode(l.code); return p && !isOut(p, l.size); });
+  if (kept.length !== cart.length){ cart = kept; saveCart(); }
+})();
 
 /* ---------- grid ---------- */
 const grid = document.getElementById('grid');
@@ -1191,14 +1228,18 @@ const swatchesOf = p => p.colour.split('/').map(s => s.trim()).map(n => SWATCH[n
 
 function cardHtml(p){
   const one = p.sizes.length === 1;
-  const badge = p.badge ? '<span class="badge">' + p.badge + '</span>'
+  const gone = allGone(p);
+  const badge = gone ? '<span class="badge gone">Sold out</span>'
+              : p.badge ? '<span class="badge">' + p.badge + '</span>'
               : one ? '<span class="badge low">Last pair</span>' : '';
   const alt = (CAN_HOVER && p.alt) ? '<img class="alt" src="' + p.alt + '" alt="" loading="lazy" width="800" height="1000">' : '';
-  const meta = one ? 'Size ' + p.sizes[0] + ' · ' + p.colour : p.colour + ' · M–XXL';
+  const meta = gone ? p.colour + ' · Sold out'
+             : one ? 'Size ' + p.sizes[0] + ' · ' + p.colour : p.colour + ' · M–XXL';
   const link = '#p-' + p.code;
   const dots = swatchesOf(p).map(c => '<span class="dot" style="background:' + c + '"></span>').join('');
-  const qa = p.sizes.map(s =>
-    '<button class="qa" data-add="' + p.code + '|' + s + '" aria-label="Add size ' + s + ' to bag">' + s + '</button>').join('');
+  const qa = p.sizes.map(s => isOut(p, s)
+    ? '<button class="qa" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
+    : '<button class="qa" data-add="' + p.code + '|' + s + '" aria-label="Add size ' + s + ' to bag">' + s + '</button>').join('');
   return '<article class="card">' +
     '<div class="card-media">' +
       '<a class="shot" href="' + link + '" aria-label="' + p.name + ', ' + p.colour + '">' +
@@ -1216,8 +1257,13 @@ function cardHtml(p){
 
 function renderGrid(){
   const list = visible();
+  /* "in stock" must stay true: once something is fully gone it is still shown
+     but no longer counted as available. */
+  const live = list.filter(p => !allGone(p)).length;
   countLine.textContent = list.length + (list.length === 1 ? ' piece' : ' pieces') +
-    (filter === 'all' && !query ? ' in stock' : ' shown');
+    (filter === 'all' && !query
+      ? (live === list.length ? ' in stock' : ', ' + live + ' in stock')
+      : ' shown');
   grid.innerHTML = list.length
     ? list.map(cardHtml).join('')
     : '<p class="empty">Nothing matches that. Try another size, colour or code.</p>';
@@ -1294,6 +1340,10 @@ scrim.addEventListener('click', () => { closeNav(); closeCart(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closeNav(); closeCart(); closeModal(); } });
 
 function addToCart(code, size){
+  const p = byCode(code);
+  /* Every route into the bag comes through here, so one guard covers the
+     grid, the quick view and the product page. */
+  if (!p || isOut(p, size)) return;
   const line = cart.find(l => l.code === code && l.size === size);
   if (line) line.qty += 1; else cart.push({code, size, qty:1});
   saveCart(); renderCart(); openCart();
@@ -1533,7 +1583,9 @@ let current = null, chosenSize = null;
 
 function openModal(code){
   const p = byCode(code); if (!p) return;
-  current = p; chosenSize = p.sizes.length === 1 ? p.sizes[0] : null;
+  current = p;
+  const mLive = liveSizes(p);
+  chosenSize = mLive.length === 1 ? mLive[0] : null;
   document.getElementById('mImg').src = p.img;
   document.getElementById('mImg').alt = p.name + ' in ' + p.colour;
   document.getElementById('mCat').textContent = p.cat;
@@ -1541,13 +1593,11 @@ function openModal(code){
   document.getElementById('mColour').textContent = p.colour + ' — ' + p.note;
   document.getElementById('mPrice').textContent = rs(p.price);
   document.getElementById('mCode').textContent = p.code;
-  document.getElementById('mSizeLabel').textContent = p.sizes.length === 1 ? 'Size' : 'Select size';
-  document.getElementById('mStock').textContent = p.sizes.length === 1
-    ? 'One pair only, size ' + p.sizes[0] + '. We confirm it is still here before you pay.'
-    : 'Sizes ' + p.sizes[0] + ' to ' + p.sizes[p.sizes.length - 1] +
-      '. We confirm your size is in stock before you pay.';
-  document.getElementById('mSizes').innerHTML = p.sizes.map(s =>
-    '<button class="size" data-size="' + s + '" aria-pressed="' + (chosenSize === s) + '">' + s + '</button>').join('');
+  document.getElementById('mSizeLabel').textContent = mLive.length === 1 ? 'Size' : 'Select size';
+  document.getElementById('mStock').textContent = stockLine(p);
+  document.getElementById('mSizes').innerHTML = p.sizes.map(s => isOut(p, s)
+    ? '<button class="size" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
+    : '<button class="size" data-size="' + s + '" aria-pressed="' + (chosenSize === s) + '">' + s + '</button>').join('');
   syncAdd();
   modal.hidden = false;
   document.getElementById('modalClose').focus();
@@ -1555,8 +1605,10 @@ function openModal(code){
 function closeModal(){ modal.hidden = true; current = null; }
 function syncAdd(){
   const btn = document.getElementById('mAdd');
-  btn.disabled = !chosenSize;
-  btn.textContent = chosenSize ? 'Add to bag · ' + rs(current.price) : 'Select a size';
+  const gone = allGone(current);
+  btn.disabled = gone || !chosenSize;
+  btn.textContent = gone ? 'Sold out'
+    : chosenSize ? 'Add to bag · ' + rs(current.price) : 'Select a size';
 }
 document.getElementById('mSizes').addEventListener('click', e => {
   const b = e.target.closest('.size'); if (!b) return;
@@ -1657,17 +1709,18 @@ function renderPdp(){
   document.getElementById('pdpSub').textContent = p.code + ' · ' + p.colour;
   document.getElementById('pdpPrice').textContent = rs(p.price);
   document.getElementById('pdpDetails').textContent = p.note;
-  document.getElementById('pdpSizeLabel').textContent = one ? 'Size' : 'Select size';
-  document.getElementById('pdpStock').textContent = one
-    ? 'One pair only, size ' + p.sizes[0] + '. We confirm it is still here before you pay.'
-    : 'Sizes ' + p.sizes[0] + ' to ' + p.sizes[p.sizes.length - 1] +
-      '. We confirm your size is in stock before you pay.';
-  document.getElementById('pdpSizes').innerHTML = p.sizes.map(s =>
-    '<button class="size" data-psize="' + s + '" aria-pressed="' + (pdpSize === s) + '">' + s + '</button>').join('');
+  const pdpLive = liveSizes(p);
+  document.getElementById('pdpSizeLabel').textContent = pdpLive.length === 1 ? 'Size' : 'Select size';
+  document.getElementById('pdpStock').textContent = stockLine(p);
+  document.getElementById('pdpSizes').innerHTML = p.sizes.map(s => isOut(p, s)
+    ? '<button class="size" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
+    : '<button class="size" data-psize="' + s + '" aria-pressed="' + (pdpSize === s) + '">' + s + '</button>').join('');
   document.getElementById('pdpQty').textContent = pdpQty;
   const add = document.getElementById('pdpAdd');
-  add.disabled = !pdpSize;
-  add.textContent = pdpSize ? 'Add to bag · ' + rs(p.price * pdpQty) : 'Select a size';
+  const pdpGone = allGone(p);
+  add.disabled = pdpGone || !pdpSize;
+  add.textContent = pdpGone ? 'Sold out'
+    : pdpSize ? 'Add to bag · ' + rs(p.price * pdpQty) : 'Select a size';
   const rel = PRODUCTS.filter(x => x.cat === p.cat && x.code !== p.code).slice(0, 4);
   document.getElementById('pdpRelated').innerHTML = rel.length
     ? rel.map(cardHtml).join('')
@@ -1710,7 +1763,8 @@ function showOrdered(){
 
 function showPdp(p){
   pdpProduct = p;
-  pdpSize = p.sizes.length === 1 ? p.sizes[0] : null;
+  const pLive = liveSizes(p);
+  pdpSize = pLive.length === 1 ? pLive[0] : null;
   pdpQty = 1; pdpShot = 0;
   setView('pdp');
   renderPdp();
