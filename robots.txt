@@ -1,0 +1,11 @@
+# City Garments — https://citygarments.netlify.app
+#
+# Everything here is a public shop front, so every crawler is welcome.
+# The only thing worth hiding is the order form's POST target, which is
+# Netlify's and not a page anyone should be indexing.
+
+User-agent: *
+Allow: /
+Disallow: /.netlify/
+
+Sitemap: https://citygarments.netlify.app/sitemap.xml

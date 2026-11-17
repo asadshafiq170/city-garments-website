@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The shop is one HTML page. Categories and products are hash routes
+  (#c-jackets, #p-CG-J01), and a crawler treats a hash as the same URL,
+  so there is exactly one address to list here. Giving each product its
+  own real URL would need a routing change, not a bigger sitemap.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://citygarments.netlify.app/</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
