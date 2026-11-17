@@ -24,8 +24,12 @@
 <meta name="twitter:image" content="https://citygarments.netlify.app/img/og-cover.jpg">
 <link rel="preload" as="image" href="img/hero-wide.webp" media="(min-width:600px)" fetchpriority="high">
 <link rel="preload" as="image" href="img/hero.webp" media="(max-width:599.98px)" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap">
+<!-- Only the weights the stylesheet below actually applies: Archivo 400/500/600/700,
+     Cormorant 400 (the big display headings) and 500 (h1-h3 default, .tile-copy b),
+     Inter 400/600. Cormorant 300/600 and Inter 500 were requested but never used. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500&family=Inter:wght@400;600&display=swap">
 <style>
 /* Layout: slim sticky header · split hero (type left / model right) · three category tiles ·
    filterable product grid, 4-up desktop and 2-up phone · slide-over cart */
@@ -1156,6 +1160,9 @@ const PRODUCTS = [
 const WA = '923204130348';
 const LAHORE_DELIVERY = 300;
 const PAKISTAN_DELIVERY = 350;
+/* The second card photo only ever shows on :hover, so on a touch screen it is
+   a download nobody can see. The shot is still reachable on the product page. */
+const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const rs = n => 'Rs ' + n.toLocaleString('en-PK');
 const byCode = c => PRODUCTS.find(p => p.code === c);
 
@@ -1186,7 +1193,7 @@ function cardHtml(p){
   const one = p.sizes.length === 1;
   const badge = p.badge ? '<span class="badge">' + p.badge + '</span>'
               : one ? '<span class="badge low">Last pair</span>' : '';
-  const alt = p.alt ? '<img class="alt" src="' + p.alt + '" alt="" loading="lazy" width="800" height="1000">' : '';
+  const alt = (CAN_HOVER && p.alt) ? '<img class="alt" src="' + p.alt + '" alt="" loading="lazy" width="800" height="1000">' : '';
   const meta = one ? 'Size ' + p.sizes[0] + ' · ' + p.colour : p.colour + ' · M–XXL';
   const link = '#p-' + p.code;
   const dots = swatchesOf(p).map(c => '<span class="dot" style="background:' + c + '"></span>').join('');
