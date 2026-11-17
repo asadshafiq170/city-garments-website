@@ -1,0 +1,12 @@
+# Netlify response headers.
+#
+# Product and hero photos are served under a fixed filename, so without this
+# Netlify sends "max-age=0, must-revalidate" and every repeat visitor
+# re-checks all ~24 grid images with the server before showing them.
+#
+# IMPORTANT: because these are cached for a week, REPLACING a photo in place
+# will not reach people who already visited. When a photo changes, give it a
+# new filename (CG-J01-a2.webp) and update index.html to point at it.
+
+/img/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
