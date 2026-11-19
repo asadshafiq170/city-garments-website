@@ -519,7 +519,7 @@ body.lb-open{overflow:hidden}
 .ok-row>span:first-child{color:var(--muted);font-family:var(--font-display);font-size:10px;
   letter-spacing:.11em;text-transform:uppercase;padding-top:2px}
 .ok-actions{display:grid;gap:9px;margin-top:22px}
-@media (min-width:600px){.ok-actions{grid-auto-flow:column;justify-content:center}}
+@media (min-width:600px){.ok-actions{display:flex;flex-wrap:wrap;justify-content:center}}
 
 /* ---------- payment methods strip ---------- */
 .paystrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
@@ -588,6 +588,21 @@ footer li a{display:inline-block;padding:4px 0}
   .ok-row{grid-template-columns:1fr;gap:1px}
   .news input{min-width:100%}
   .news form .btn{width:100%}
+}
+
+/* ---------- the printed receipt ----------
+   There is no server here that could email a customer, so the only copy they can
+   keep by themselves is a printed one: every phone's print dialog offers "Save as
+   PDF". Printing drops the page furniture; only the confirmation is ever worth
+   paper, and its buttons and tick mark are not. */
+.print-only{display:none}
+@media print{
+  .topbar,.site-header,footer,.ok-actions,.ok-mark{display:none !important}
+  .print-only{display:block;font-size:12px;letter-spacing:.02em;margin:0 0 18px}
+  body{background:#fff;color:#000}
+  .band{padding:0 !important}
+  .ok{max-width:none;text-align:left}
+  .ok-card{break-inside:avoid;border-color:#999}
 }
 </style>
 </head>
@@ -948,6 +963,9 @@ footer li a{display:inline-block;padding:4px 0}
         <input type="hidden" name="subtotal" id="hSubtotal">
         <input type="hidden" name="delivery" id="hDelivery">
         <input type="hidden" name="total" id="hTotal">
+        <!-- Netlify emails every field to the shop, so this one arrives as a tappable
+             link that opens WhatsApp with the customer's confirmation already written. -->
+        <input type="hidden" name="confirm_customer_on_whatsapp" id="hWa">
         <div class="co-main">
           <fieldset class="co-block first">
             <legend>1 &middot; Contact</legend>
@@ -1039,13 +1057,15 @@ footer li a{display:inline-block;padding:4px 0}
   <section class="band">
     <div class="wrap">
       <div class="ok">
+        <p class="print-only">City Garments &middot; Allama Iqbal Town, Lahore &middot; WhatsApp 0320 4130348 &middot; citygarments.netlify.app</p>
         <div class="ok-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
         <h1>Order placed</h1>
         <p class="ok-no">Your order number<b id="okNo">&nbsp;</b></p>
         <p class="lead" id="okLead"></p>
         <div class="ok-card" id="okCard"></div>
         <div class="ok-actions">
-          <button class="btn" id="okWa">Send order on WhatsApp</button>
+          <button class="btn" id="okPrint">Save receipt</button>
+          <button class="btn ghost" id="okWa">Send order on WhatsApp</button>
           <button class="btn ghost" id="okCopy">Copy order details</button>
           <a class="btn ghost" href="#c-all" style="text-align:center;text-decoration:none">Continue shopping</a>
         </div>
@@ -1469,6 +1489,27 @@ function orderMessage(o){
   return out.join('\n');
 }
 
+/* ---------- the customer's confirmation ----------
+   orderMessage above runs customer -> shop. This one runs shop -> customer, and it
+   is the only written confirmation a customer gets: nothing here can send an email,
+   and WhatsApp is the one channel every buyer already reads. The shop never types
+   it. customerWaLink rides along in the order email as a link, so confirming an
+   order is one tap from the inbox. It still takes that tap, which is why the
+   confirmation page promises the message rather than claiming it was sent. */
+function customerMessage(o){
+  const lines = o.items.map(i => '- ' + i.name + ' (' + i.colour + ') size ' + i.size + ' x' + i.qty);
+  const total = o.delivery === null ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
+  return ['City Garments', '', 'Your order ' + o.no + ' is confirmed.', '', ...lines, '',
+    'Total: ' + total + ' (' + PAY_LABEL[o.pay] + ')', '',
+    'We confirm your address before dispatch. Save this number for any update about this order.'
+  ].join('\n');
+}
+function customerWaLink(o){
+  /* o.phone is normalPhone output: eleven digits beginning 0. wa.me wants the
+     country code and no leading zero. */
+  return 'https://wa.me/92' + o.phone.slice(1) + '?text=' + encodeURIComponent(customerMessage(o));
+}
+
 coForm.addEventListener('submit', e => {
   e.preventDefault();
   if (!cart.length){ location.hash = '#c-all'; return; }
@@ -1522,6 +1563,7 @@ function sendOrder(o){
   document.getElementById('hDelivery').value = o.delivery === null ? 'confirmed on call' : rs(o.delivery);
   document.getElementById('hTotal').value    = o.delivery === null
     ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
+  document.getElementById('hWa').value       = customerWaLink(o);
 
   const btn = coForm.querySelector('button[type=submit]');
   const label = btn ? btn.textContent : '';
@@ -1549,8 +1591,8 @@ function renderOk(o){
   document.getElementById('okNo').textContent = o.no;
   const first = o.name.split(' ')[0];
   const advance = o.pay !== 'cod';
-  document.getElementById('okLead').textContent = 'Thank you, ' + first + '. We will call you on ' +
-    prettyPhone(o.phone) + ' to confirm stock and your address' +
+  document.getElementById('okLead').textContent = 'Thank you, ' + first + '. Your written confirmation comes to ' +
+    prettyPhone(o.phone) + ' on WhatsApp, and we call the same number to confirm stock and your address' +
     (advance ? '. Send the total to 0320 4130348 on JazzCash or Easypaisa and WhatsApp us the screenshot.'
              : '. Pay the rider when your parcel arrives.');
 
@@ -1558,8 +1600,8 @@ function renderOk(o){
   const total = o.delivery === null ? rs(o.subtotal) + ' + delivery' : rs(o.subtotal + o.delivery);
   const row = (k, v) => '<div class="ok-row"><span>' + k + '</span><span>' + v + '</span></div>';
   document.getElementById('okNote').innerHTML = orderSent
-    ? 'Your order is with us. We will call you on ' + prettyPhone(o.phone) +
-      ' to confirm it before dispatch. Keep your order number for any message about this order.'
+    ? 'Your order is with us. Keep your order number for any message about this order, ' +
+      'or press Save receipt to keep a copy on your phone.'
     : '<b>We could not reach our system, so your order is not with us yet.</b> WhatsApp should have ' +
       'opened with the whole order ready \u2014 press send there, or use the button above.';
   document.getElementById('okCard').innerHTML =
@@ -1572,6 +1614,7 @@ document.getElementById('okWa').addEventListener('click', () => {
   if (!lastOrder) return;
   window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(orderMessage(lastOrder)), '_blank', 'noopener');
 });
+document.getElementById('okPrint').addEventListener('click', () => window.print());
 document.getElementById('okCopy').addEventListener('click', async e => {
   if (!lastOrder) return;
   const btn = e.currentTarget;
