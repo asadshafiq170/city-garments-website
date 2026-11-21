@@ -431,6 +431,8 @@ body.lb-open{overflow:hidden}
 .pdp-info h1{font-size:clamp(25px,3.6vw,38px);font-weight:400;letter-spacing:-.01em;line-height:1.1}
 .pdp-sub{color:var(--muted);font-size:12.5px;margin:0}
 .pdp-price{font-family:var(--font-display);font-size:20px;font-weight:700}
+.price .was{color:var(--muted);font-weight:400;font-size:.72em;margin-left:8px}
+.price .off{color:var(--sale);font-weight:700;font-size:.62em;letter-spacing:.06em;text-transform:uppercase;margin-left:6px}
 .pdp-actions{display:grid;gap:8px}
 .qty-row{display:flex;align-items:center;gap:12px}
 .qty-row .qty{margin-top:0}
@@ -611,7 +613,7 @@ footer li a{display:inline-block;padding:4px 0}
 
 <a class="skip" href="#top">Skip to content</a>
 
-<div class="topbar"><div class="wrap"><p>Cash on delivery<span class="tb-long"> across Pakistan</span> · 7-day exchange · Lahore Rs 300<span class="tb-long"> · rest of Pakistan Rs 350</span></p></div></div>
+<div class="topbar"><div class="wrap"><p>Blessed Friday Sale · 12.5% off leather jackets<span class="tb-long"> · Cash on delivery · 7-day exchange · Lahore Rs 300 · rest of Pakistan Rs 350</span></p></div></div>
 
 <header class="site-header">
   <div class="wrap">
@@ -752,7 +754,7 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Genuine leather</span>
           <h2>Leather Jackets</h2>
-          <p>100% genuine leather · lab tested · Rs 20,000</p>
+          <p>Blessed Friday Sale · flat 12.5% off · now Rs 17,500</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -761,12 +763,14 @@ footer li a{display:inline-block;padding:4px 0}
         <button class="rail-nav next" type="button" data-rail="railLeather" data-dir="1" aria-label="More products" hidden>&#8250;</button>
       </div>
       <a class="viewall" href="#c-leather">View all 28</a>
-      <!-- Written for the buyer who has just read "Rs 20,000": what the money buys,
-           in claims the shop can stand behind. No crossed-out price, no invented saving. -->
+      <!-- Written for the buyer who has just read the price: what the money buys, in
+           claims the shop can stand behind. The saving quoted is the real one: these
+           jackets were listed at Rs 20,000 before the Blessed Friday Sale. -->
       <p class="sec-note">Men's genuine leather jackets in Lahore, delivered across Pakistan. Every jacket here is
         real leather, lab tested &mdash; not PU and not rexine &mdash; in biker, bomber, cafe racer, trucker and hooded cuts.
-        There is one piece of each design. Real leather is bought once and worn for years, which is what
-        Rs 20,000 pays for, and you pay cash when it reaches your door.</p>
+        There is one piece of each design, and real leather is bought once and worn for years. In the
+        Blessed Friday Sale every jacket is flat 12.5% off: Rs 17,500 instead of Rs 20,000, and you pay
+        cash when it reaches your door.</p>
     </div>
   </section>
 
@@ -1202,34 +1206,34 @@ const ASK = 'on call';
 /* Said by the owner about this lot. It rides on every leather product page. */
 const LEATHER_NOTE = '100% genuine leather, lab tested. One piece only.';
 const PRODUCTS = [
-  {code:'CG-L01', cat:'leather', name:'Leather Trucker Jacket', colour:'Tan', price:20000, sizes:[ASK], img:'img/CG-L01-a.webp', alt:'img/CG-L01-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
-  {code:'CG-L02', cat:'leather', name:'Tie-Dye Leather Varsity Jacket', colour:'Grey', price:20000, sizes:[ASK], img:'img/CG-L02-a.webp', alt:'img/CG-L02-b.webp', note:'Striped rib collar, cuffs and hem, snap front.'},
-  {code:'CG-L03', cat:'leather', name:'Leather Trucker Jacket', colour:'Olive', price:20000, sizes:[ASK], img:'img/CG-L03-a.webp', alt:'img/CG-L03-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
-  {code:'CG-L04', cat:'leather', name:'Leather Trucker Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L04-a.webp', alt:'img/CG-L04-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
-  {code:'CG-L05', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Dark Brown', price:20000, sizes:[ASK], img:'img/CG-L05-a.webp', alt:'img/CG-L05-b.webp', note:'Stand collar with snap tab, full zip, zip cuffs.'},
-  {code:'CG-L06', cat:'leather', name:'Leather Racer Jacket with Patches', colour:'Brown', price:20000, sizes:[ASK], img:'img/CG-L06-a.webp', note:'Stand collar, full zip, patches on chest and sleeve.'},
-  {code:'CG-L07', cat:'leather', name:'Hooded Quilted Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L07-a.webp', alt:'img/CG-L07-b.webp', note:'Long quilted cut with a fixed hood and full zip.'},
-  {code:'CG-L08', cat:'leather', name:'Hooded Leather Jacket', colour:'Beige', price:20000, sizes:[ASK], img:'img/CG-L08-a.webp', alt:'img/CG-L08-b.webp', note:'Grey-lined hood, chest zip pocket, rib hem.'},
-  {code:'CG-L09', cat:'leather', name:'Fur-Collar Leather Jacket', colour:'Dark Brown', price:20000, sizes:[ASK], img:'img/CG-L09-a.webp', alt:'img/CG-L09-b.webp', note:'Cream pile collar, snap placket, two chest pockets, buckle tabs at the hem.'},
-  {code:'CG-L10', cat:'leather', name:'Hooded Leather Jacket', colour:'Light Grey', price:20000, sizes:[ASK], img:'img/CG-L10-a.webp', alt:'img/CG-L10-b.webp', note:'Black jersey hood, chest zip pocket, zip cuffs.'},
-  {code:'CG-L11', cat:'leather', name:'Hooded Leather Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L11-a.webp', alt:'img/CG-L11-b.webp', note:'Black jersey hood, embossed design across the back, buckle tabs at the hem.'},
-  {code:'CG-L12', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L12-a.webp', alt:'img/CG-L12-b.webp', note:'Stand collar, two chest zip pockets, zip cuffs.'},
-  {code:'CG-L13', cat:'leather', name:'Ribbed-Shoulder Leather Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L13-a.webp', alt:'img/CG-L13-b.webp', note:'Ribbed shoulder panels, two chest zip pockets, zip cuffs, rubbed brown edges.'},
-  {code:'CG-L14', cat:'leather', name:'Leather Bomber Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L14-a.webp', alt:'img/CG-L14-b.webp', note:'Rib collar, cuffs and hem, clean front.'},
-  {code:'CG-L15', cat:'leather', name:'Quilted-Shoulder Leather Jacket', colour:'Dark Brown', price:20000, sizes:[ASK], img:'img/CG-L15-a.webp', alt:'img/CG-L15-b.webp', note:'Stand collar, quilted shoulders, buckle tabs at the hem, zip cuffs.'},
-  {code:'CG-L16', cat:'leather', name:'Leather Racer Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L16-a.webp', alt:'img/CG-L16-b.webp', note:'Stand collar, quilted shoulders, slanted chest zip pocket.'},
-  {code:'CG-L17', cat:'leather', name:'Leather Aviator Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L17-a.webp', alt:'img/CG-L17-b.webp', note:'Shirt collar, flap pockets, rib cuffs and hem, patches on chest and sleeve.'},
-  {code:'CG-L18', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Cognac', price:20000, sizes:[ASK], img:'img/CG-L18-a.webp', alt:'img/CG-L18-b.webp', note:'Stand collar, quilted shoulders, two chest zip pockets, zip cuffs.'},
-  {code:'CG-L19', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L19-a.webp', alt:'img/CG-L19-b.webp', note:'Lapel collar, asymmetric zip, zip cuffs.'},
-  {code:'CG-L20', cat:'leather', name:'Leather-Sleeve Shirt Jacket', colour:'Olive / Black', price:20000, sizes:[ASK], img:'img/CG-L20-a.webp', alt:'img/CG-L20-b.webp', note:'Olive body with leather sleeves and collar, studded detail, snap front.'},
-  {code:'CG-L21', cat:'leather', name:'Quilted Leather Jacket', colour:'Grey', price:20000, sizes:[ASK], img:'img/CG-L21-a.webp', note:'Stand collar, full zip, channel quilting all over.'},
-  {code:'CG-L22', cat:'leather', name:'Leather Racer Jacket', colour:'Brown', price:20000, sizes:[ASK], img:'img/CG-L22-a.webp', note:'Stand collar, two flap chest pockets, full zip.'},
-  {code:'CG-L23', cat:'leather', name:'Fur-Collar Leather Jacket', colour:'Dark Brown', price:20000, sizes:[ASK], img:'img/CG-L23-a.webp', note:'Cream pile collar, full zip, two chest pockets.'},
-  {code:'CG-L24', cat:'leather', name:'Distressed Leather Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L24-a.webp', alt:'img/CG-L24-b.webp', note:'Quilted shoulders, two flap chest pockets, full zip, rubbed brown edges.'},
-  {code:'CG-L26', cat:'leather', name:'Hooded Leather Jacket', colour:'Teal', price:20000, sizes:[ASK], img:'img/CG-L26-a.webp', alt:'img/CG-L26-b.webp', note:'Black jersey hood, two chest zip pockets.'},
-  {code:'CG-L27', cat:'leather', name:'Distressed Leather Bomber Jacket', colour:'Brown', price:20000, sizes:[ASK], img:'img/CG-L27-a.webp', alt:'img/CG-L27-b.webp', note:'Shirt collar, two flap chest pockets, rib cuffs and hem.'},
-  {code:'CG-L28', cat:'leather', name:'Hooded Leather Jacket', colour:'Light Grey', price:20000, sizes:[ASK], img:'img/CG-L28-a.webp', alt:'img/CG-L28-b.webp', note:'Grey jersey hood, quilted shoulders, two chest zip pockets.'},
-  {code:'CG-L29', cat:'leather', name:'Distressed Leather Shirt Jacket', colour:'Black', price:20000, sizes:[ASK], img:'img/CG-L29-a.webp', alt:'img/CG-L29-b.webp', note:'Shirt collar, two chest zip pockets, snap front.'},
+  {code:'CG-L01', cat:'leather', name:'Leather Trucker Jacket', colour:'Tan', price:17500, was:20000, sizes:[ASK], img:'img/CG-L01-a.webp', alt:'img/CG-L01-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
+  {code:'CG-L02', cat:'leather', name:'Tie-Dye Leather Varsity Jacket', colour:'Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L02-a.webp', alt:'img/CG-L02-b.webp', note:'Striped rib collar, cuffs and hem, snap front.'},
+  {code:'CG-L03', cat:'leather', name:'Leather Trucker Jacket', colour:'Olive', price:17500, was:20000, sizes:[ASK], img:'img/CG-L03-a.webp', alt:'img/CG-L03-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
+  {code:'CG-L04', cat:'leather', name:'Leather Trucker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L04-a.webp', alt:'img/CG-L04-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
+  {code:'CG-L05', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Dark Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L05-a.webp', alt:'img/CG-L05-b.webp', note:'Stand collar with snap tab, full zip, zip cuffs.'},
+  {code:'CG-L06', cat:'leather', name:'Leather Racer Jacket with Patches', colour:'Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L06-a.webp', note:'Stand collar, full zip, patches on chest and sleeve.'},
+  {code:'CG-L07', cat:'leather', name:'Hooded Quilted Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L07-a.webp', alt:'img/CG-L07-b.webp', note:'Long quilted cut with a fixed hood and full zip.'},
+  {code:'CG-L08', cat:'leather', name:'Hooded Leather Jacket', colour:'Beige', price:17500, was:20000, sizes:[ASK], img:'img/CG-L08-a.webp', alt:'img/CG-L08-b.webp', note:'Grey-lined hood, chest zip pocket, rib hem.'},
+  {code:'CG-L09', cat:'leather', name:'Fur-Collar Leather Jacket', colour:'Dark Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L09-a.webp', alt:'img/CG-L09-b.webp', note:'Cream pile collar, snap placket, two chest pockets, buckle tabs at the hem.'},
+  {code:'CG-L10', cat:'leather', name:'Hooded Leather Jacket', colour:'Light Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L10-a.webp', alt:'img/CG-L10-b.webp', note:'Black jersey hood, chest zip pocket, zip cuffs.'},
+  {code:'CG-L11', cat:'leather', name:'Hooded Leather Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L11-a.webp', alt:'img/CG-L11-b.webp', note:'Black jersey hood, embossed design across the back, buckle tabs at the hem.'},
+  {code:'CG-L12', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L12-a.webp', alt:'img/CG-L12-b.webp', note:'Stand collar, two chest zip pockets, zip cuffs.'},
+  {code:'CG-L13', cat:'leather', name:'Ribbed-Shoulder Leather Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L13-a.webp', alt:'img/CG-L13-b.webp', note:'Ribbed shoulder panels, two chest zip pockets, zip cuffs, rubbed brown edges.'},
+  {code:'CG-L14', cat:'leather', name:'Leather Bomber Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L14-a.webp', alt:'img/CG-L14-b.webp', note:'Rib collar, cuffs and hem, clean front.'},
+  {code:'CG-L15', cat:'leather', name:'Quilted-Shoulder Leather Jacket', colour:'Dark Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L15-a.webp', alt:'img/CG-L15-b.webp', note:'Stand collar, quilted shoulders, buckle tabs at the hem, zip cuffs.'},
+  {code:'CG-L16', cat:'leather', name:'Leather Racer Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L16-a.webp', alt:'img/CG-L16-b.webp', note:'Stand collar, quilted shoulders, slanted chest zip pocket.'},
+  {code:'CG-L17', cat:'leather', name:'Leather Aviator Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L17-a.webp', alt:'img/CG-L17-b.webp', note:'Shirt collar, flap pockets, rib cuffs and hem, patches on chest and sleeve.'},
+  {code:'CG-L18', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Cognac', price:17500, was:20000, sizes:[ASK], img:'img/CG-L18-a.webp', alt:'img/CG-L18-b.webp', note:'Stand collar, quilted shoulders, two chest zip pockets, zip cuffs.'},
+  {code:'CG-L19', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L19-a.webp', alt:'img/CG-L19-b.webp', note:'Lapel collar, asymmetric zip, zip cuffs.'},
+  {code:'CG-L20', cat:'leather', name:'Leather-Sleeve Shirt Jacket', colour:'Olive / Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L20-a.webp', alt:'img/CG-L20-b.webp', note:'Olive body with leather sleeves and collar, studded detail, snap front.'},
+  {code:'CG-L21', cat:'leather', name:'Quilted Leather Jacket', colour:'Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L21-a.webp', note:'Stand collar, full zip, channel quilting all over.'},
+  {code:'CG-L22', cat:'leather', name:'Leather Racer Jacket', colour:'Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L22-a.webp', note:'Stand collar, two flap chest pockets, full zip.'},
+  {code:'CG-L23', cat:'leather', name:'Fur-Collar Leather Jacket', colour:'Dark Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L23-a.webp', note:'Cream pile collar, full zip, two chest pockets.'},
+  {code:'CG-L24', cat:'leather', name:'Distressed Leather Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L24-a.webp', alt:'img/CG-L24-b.webp', note:'Quilted shoulders, two flap chest pockets, full zip, rubbed brown edges.'},
+  {code:'CG-L26', cat:'leather', name:'Hooded Leather Jacket', colour:'Teal', price:17500, was:20000, sizes:[ASK], img:'img/CG-L26-a.webp', alt:'img/CG-L26-b.webp', note:'Black jersey hood, two chest zip pockets.'},
+  {code:'CG-L27', cat:'leather', name:'Distressed Leather Bomber Jacket', colour:'Brown', price:17500, was:20000, sizes:[ASK], img:'img/CG-L27-a.webp', alt:'img/CG-L27-b.webp', note:'Shirt collar, two flap chest pockets, rib cuffs and hem.'},
+  {code:'CG-L28', cat:'leather', name:'Hooded Leather Jacket', colour:'Light Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L28-a.webp', alt:'img/CG-L28-b.webp', note:'Grey jersey hood, quilted shoulders, two chest zip pockets.'},
+  {code:'CG-L29', cat:'leather', name:'Distressed Leather Shirt Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L29-a.webp', alt:'img/CG-L29-b.webp', note:'Shirt collar, two chest zip pockets, snap front.'},
 
   {code:'CG-J01', cat:'jackets', name:'Reversible Puffer Jacket', colour:'Black / Maroon', price:5999, sizes:['M','L','XL','XXL'], img:'img/CG-J01-a.webp', alt:'img/CG-J01-b.webp', badge:'New', note:'Two colours in one jacket — flip it black or maroon.'},
   {code:'CG-J02', cat:'jackets', name:'Reversible Puffer Jacket', colour:'Olive / Grey', price:5999, sizes:['M','L','XL','XXL'], img:'img/CG-J02-a.webp', alt:'img/CG-J02-b.webp', badge:'New', note:'Two colours in one jacket — flip it olive or grey.'},
@@ -1258,6 +1262,15 @@ const PAKISTAN_DELIVERY = 350;
    a download nobody can see. The shot is still reachable on the product page. */
 const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const rs = n => 'Rs ' + n.toLocaleString('en-PK');
+/* ---------- sale ----------
+   A product is on sale when it carries `was`: the price it was actually listed
+   at before. Nothing else switches a sale on, so a crossed-out price can only
+   ever be one the shop really charged. To end the sale, put the old figure back
+   in `price` and delete `was`. */
+const offOf = p => p.was ? Math.round((1 - p.price / p.was) * 1000) / 10 : 0;
+const priceHtml = p => p.was
+  ? rs(p.price) + ' <s class="was">' + rs(p.was) + '</s> <span class="off">' + offOf(p) + '% off</span>'
+  : rs(p.price);
 const byCode = c => PRODUCTS.find(p => p.code === c);
 
 /* ---------- stock ----------
@@ -1325,6 +1338,7 @@ function cardHtml(p){
   const gone = allGone(p);
   const ask = p.sizes[0] === ASK;
   const badge = gone ? '<span class="badge gone">Sold out</span>'
+              : p.was ? '<span class="badge low">' + offOf(p) + '% off</span>'
               : p.badge ? '<span class="badge">' + p.badge + '</span>'
               : one ? '<span class="badge low">' + (ask ? 'One piece' : 'Last pair') + '</span>' : '';
   const alt = (CAN_HOVER && p.alt) ? '<img class="alt" src="' + p.alt + '" alt="" loading="lazy" width="800" height="1000">' : '';
@@ -1368,7 +1382,7 @@ function renderGrid(){
 const CATS = {
   all:      {title:'All products', eyebrow:'The full rail'},
   leather:  {title:'Leather Jackets', eyebrow:'Genuine leather',
-             intro:'100% genuine leather, lab tested. One piece of each design, Rs 20,000, cash on delivery across Pakistan.'},
+             intro:'Blessed Friday Sale: flat 12.5% off, now Rs 17,500. 100% genuine leather, lab tested, one piece of each design.'},
   jackets:  {title:'Jackets',      eyebrow:'Outerwear'},
   shackets: {title:'Shackets',     eyebrow:'Layering'},
   footwear: {title:'Footwear',     eyebrow:'Shoes'}
@@ -1713,7 +1727,7 @@ function openModal(code){
   document.getElementById('mCat').textContent = p.cat;
   document.getElementById('mName').textContent = p.name;
   document.getElementById('mColour').textContent = p.colour + ' — ' + detailOf(p);
-  document.getElementById('mPrice').textContent = rs(p.price);
+  document.getElementById('mPrice').innerHTML = priceHtml(p);
   document.getElementById('mCode').textContent = p.code;
   document.getElementById('mSizeLabel').textContent = mLive.length === 1 ? 'Size' : 'Select size';
   document.getElementById('mStock').textContent = stockLine(p);
@@ -1829,7 +1843,7 @@ function renderPdp(){
   document.getElementById('pdpCat').textContent = p.cat;
   document.getElementById('pdpName').textContent = p.name;
   document.getElementById('pdpSub').textContent = p.code + ' · ' + p.colour;
-  document.getElementById('pdpPrice').textContent = rs(p.price);
+  document.getElementById('pdpPrice').innerHTML = priceHtml(p);
   document.getElementById('pdpDetails').textContent = detailOf(p);
   const pdpLive = liveSizes(p);
   document.getElementById('pdpSizeLabel').textContent = pdpLive.length === 1 ? 'Size' : 'Select size';
@@ -2256,7 +2270,7 @@ route();
   "url": "https://citygarments.netlify.app/",
   "image": "https://citygarments.netlify.app/img/og-cover.jpg",
   "telephone": "+92-320-4130348",
-  "priceRange": "Rs 4,500 - Rs 20,000",
+  "priceRange": "Rs 4,500 - Rs 17,500",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Karim Block, Allama Iqbal Town",
