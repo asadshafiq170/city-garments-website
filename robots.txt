@@ -1,4 +1,4 @@
-# City Garments — https://citygarments.netlify.app
+# City Garments — https://citygarments.pk
 #
 # Everything here is a public shop front, so every crawler is welcome.
 # The only thing worth hiding is the order form's POST target, which is
@@ -8,4 +8,4 @@ User-agent: *
 Allow: /
 Disallow: /.netlify/
 
-Sitemap: https://citygarments.netlify.app/sitemap.xml
+Sitemap: https://citygarments.pk/sitemap.xml

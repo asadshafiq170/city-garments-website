@@ -1,0 +1,8 @@
+# The shop's own address is https://citygarments.pk (since 23 Nov 2026).
+#
+# The first address, citygarments.netlify.app, is printed in every post and
+# caption made before that date, so it must keep working: these two lines
+# send anyone who opens it to the same page on the new address. The "!"
+# forces the redirect even though a file exists at that path.
+https://citygarments.netlify.app/*  https://citygarments.pk/:splat  301!
+http://citygarments.netlify.app/*   https://citygarments.pk/:splat  301!
