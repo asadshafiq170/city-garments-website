@@ -59,6 +59,9 @@
   --font-display:'Archivo','Helvetica Neue',Arial,sans-serif;
   --font-serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --font-body:'Inter','Helvetica Neue',Arial,sans-serif;
+  /* The one side margin of the site. Header, hero text, section rows, the listing bar, the
+     menu and the footer all start and end on it, so everything lines up at any width. */
+  --gutter:clamp(16px,2.4vw,40px);
 }
 
 *{box-sizing:border-box}
@@ -73,9 +76,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .btn:not(.ghost):focus-visible{outline-color:var(--text)}
 h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:0;letter-spacing:0}
 
-.wrap{width:100%;max-width:1160px;margin-inline:auto;
-  padding-left:max(16px,env(safe-area-inset-left,0px));
-  padding-right:max(16px,env(safe-area-inset-right,0px));}
+.wrap{width:100%;margin-inline:auto;
+  padding-left:max(var(--gutter),env(safe-area-inset-left,0px));
+  padding-right:max(var(--gutter),env(safe-area-inset-right,0px));}
+/* Reading pages stay a comfortable measure; they are centred as a block, trail and title included. */
+#pdpView .wrap{max-width:1360px}
+#coView .wrap,#okView .wrap{max-width:1160px}
 
 .eyebrow{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .price{font-variant-numeric:tabular-nums}
@@ -133,14 +139,14 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
   padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 .drawer.on{opacity:1;visibility:visible;transition:opacity .32s ease,visibility 0s}
 body.nav-open{overflow:hidden}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line)}
-.drawer-body{flex:1;display:grid;align-content:start;width:100%;max-width:1160px;margin-inline:auto;padding:26px 22px 30px}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px var(--gutter);border-bottom:1px solid var(--line)}
+.drawer-body{flex:1;display:grid;align-content:start;width:100%;padding:26px var(--gutter) 30px}
 @media (min-width:860px){.drawer-body{align-content:center;padding-block:40px}}
 .drawer nav{display:flex;flex-direction:column;gap:2px}
 .drawer nav a{font-family:var(--font-serif);font-size:clamp(22px,3vw,30px);font-weight:400;line-height:1.2;letter-spacing:-.005em;
   text-decoration:none;padding:7px 0;width:fit-content}
 .drawer nav a:hover{color:var(--accent)}
-.drawer-foot{display:flex;flex-wrap:wrap;gap:6px 18px;padding:16px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.drawer-foot{display:flex;flex-wrap:wrap;gap:6px 18px;padding:16px var(--gutter);border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 .drawer-foot a{color:var(--text);text-decoration:none}
 .drawer-foot a:hover{color:var(--accent)}
 /* The links rise in one after another as the panel opens. */
@@ -159,11 +165,11 @@ body.nav-open{overflow:hidden}
 .hero-slide:first-child{position:relative}
 .hero-slide.is-on{opacity:1;pointer-events:auto}
 .hero-full img{width:100%;aspect-ratio:1/1;max-height:460px;object-fit:cover;object-position:50% 10%}
-@media (min-width:600px){.hero-full img{aspect-ratio:auto;max-height:none;height:clamp(320px,40vw,460px);object-position:50% 30%}}
+@media (min-width:600px){.hero-full img{aspect-ratio:auto;max-height:none;height:clamp(340px,46vw,78vh);object-position:50% 26%}}
 .hero-slide.is-on img{animation:heroZoom 9s ease-out both}
 @keyframes heroZoom{from{transform:scale(1.07)}to{transform:scale(1)}}
 .hero-dots{position:absolute;z-index:3;display:flex;gap:6px;
-  right:max(16px,env(safe-area-inset-right,0px));bottom:14px}
+  right:max(var(--gutter),env(safe-area-inset-right,0px));bottom:14px}
 /* Each slide has a bar. The current one fills over the time the slide is held, and simply
    stays full while the slideshow is paused or motion is switched off. */
 .hero-dots button{width:34px;height:3px;padding:0;border-radius:2px;
@@ -227,7 +233,7 @@ section{scroll-margin-top:80px}
 .sec-head{display:grid;justify-items:center;text-align:center;gap:9px;margin-bottom:26px}
 .sec-head h2,.sec-head h1{font-size:clamp(26px,4.6vw,42px);letter-spacing:-.01em;font-weight:400;line-height:1.08}
 .sec-head p{margin:2px 0 0;color:var(--muted);font-size:13px;max-width:52ch}
-.sec-note{margin:22px 0 0;color:var(--muted);font-size:13.5px;line-height:1.65;max-width:74ch}
+.sec-note{margin:22px auto 0;color:var(--muted);font-size:13.5px;line-height:1.65;max-width:74ch;text-align:center}
 .sec-head::after{content:"";width:34px;height:1px;background:var(--line-strong)}
 
 /* ---------- skip link ---------- */
@@ -290,7 +296,7 @@ section{scroll-margin-top:80px}
 .mood .link-arrow i{display:inline-block;font-style:normal;margin-left:3px}
 @media (min-width:860px){.mood-copy{padding:16px 16px 18px}}
 /* The grid is capped so the tiles never grow into posters on a wide screen. */
-.moods{max-width:440px;margin-inline:auto}
+.moods{max-width:clamp(440px,36vw,700px);margin-inline:auto}
 @media (hover:hover) and (pointer:fine){
   .mood:hover .mood-img{transform:scale(1.06)}
   .mood .link-arrow i{opacity:0;transform:translateX(-9px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
@@ -330,6 +336,10 @@ section{scroll-margin-top:80px}
 @media (min-width:760px){
   .rail{gap:14px;grid-auto-columns:calc((100% - (var(--cols,4) - 1) * 14px) / var(--cols,4))}
   .rail.peek{grid-auto-columns:calc((100% - var(--cols,4) * 14px) / (var(--cols,4) + .34))}
+  .rail:not(.peek){grid-auto-columns:min(calc((100% - (var(--cols,4) - 1) * 14px) / var(--cols,4)),400px);justify-content:center}
+}
+@media (min-width:1500px){
+  .rail.peek{grid-auto-columns:calc((100% - (var(--cols,4) + 1) * 14px) / (var(--cols,4) + 1.34))}
 }
 /* With a mouse the row can be thrown sideways: press, drag, let go. While it is being dragged
    the cards under the pointer are inert, so letting go never opens a product by accident. */
@@ -417,7 +427,7 @@ section{scroll-margin-top:80px}
 /* ---------- listing page: a catalogue wall ---------- */
 .cat{padding-bottom:46px}
 .cat-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px max(16px,env(safe-area-inset-right,0px)) 2px max(16px,env(safe-area-inset-left,0px))}
+  padding:14px max(var(--gutter),env(safe-area-inset-right,0px)) 2px max(var(--gutter),env(safe-area-inset-left,0px))}
 .cat .breadcrumb{margin:0;gap:6px;flex-wrap:nowrap;min-width:0;font-family:var(--font-display);font-size:11px;letter-spacing:.09em;text-transform:uppercase}
 .cat .breadcrumb h1{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--text);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -433,7 +443,7 @@ section{scroll-margin-top:80px}
 @media (min-width:760px){.viewsw [data-cols="1"]{display:none}.viewsw [data-cols="3"],.viewsw [data-cols="4"]{display:grid}}
 /* the filters become plain text tabs with a rule under the one that is on */
 .cat .filters{flex-wrap:nowrap;gap:22px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin:0;
-  padding:8px max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px))}
+  padding:8px max(var(--gutter),env(safe-area-inset-right,0px)) 14px max(var(--gutter),env(safe-area-inset-left,0px))}
 .cat .filters::-webkit-scrollbar{display:none}
 .cat .chip{flex:none;border:0;border-bottom:1.5px solid transparent;border-radius:0;background:none;padding:6px 0;
   font-size:11.5px;letter-spacing:.1em;color:var(--muted);-webkit-backdrop-filter:none;backdrop-filter:none}
