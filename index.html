@@ -137,18 +137,18 @@ body.nav-open{overflow:hidden}
 .drawer-body{flex:1;display:grid;gap:28px;align-content:start;width:100%;max-width:1160px;margin-inline:auto;padding:26px 22px 30px}
 @media (min-width:860px){.drawer-body{grid-template-columns:1.25fr .75fr;align-items:center;align-content:center;gap:56px;padding-block:40px}}
 .drawer nav{display:flex;flex-direction:column;gap:2px}
-.drawer nav a{font-family:var(--font-serif);font-size:clamp(32px,6.2vw,58px);font-weight:400;line-height:1.14;letter-spacing:-.012em;
-  text-decoration:none;padding:5px 0;width:fit-content}
+.drawer nav a{font-family:var(--font-serif);font-size:clamp(22px,3vw,30px);font-weight:400;line-height:1.2;letter-spacing:-.005em;
+  text-decoration:none;padding:7px 0;width:fit-content}
 .drawer nav a:hover{color:var(--accent)}
 .nav-feature{display:grid;grid-template-columns:104px 1fr;gap:4px 16px;align-content:center;text-decoration:none;max-width:420px}
 .nav-feature img{grid-row:1 / span 4;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius-sm);background:var(--surface)}
 .nav-feature .eyebrow{align-self:end}
-.nav-feature b{font-family:var(--font-serif);font-size:21px;font-weight:500;line-height:1.2}
+.nav-feature b{font-family:var(--font-serif);font-size:18px;font-weight:500;line-height:1.2}
 .nav-feature .link-arrow{width:fit-content;margin-top:6px}
 @media (min-width:860px){
   .nav-feature{grid-template-columns:1fr;gap:6px;max-width:330px;justify-self:end}
   .nav-feature img{grid-row:auto;border-radius:var(--radius);margin-bottom:10px}
-  .nav-feature b{font-size:25px}
+  .nav-feature b{font-size:20px}
 }
 .drawer-foot{padding:16px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 /* Links and the featured piece rise in one after another as the panel opens. */
@@ -802,7 +802,7 @@ footer li a{display:inline-block;padding:4px 0}
     <a class="nav-feature" id="navFeature" href="#c-leather" data-close-nav hidden></a>
   </div>
   <div class="drawer-foot">
-    Karim Block, Allama Iqbal Town, Lahore<br>WhatsApp 0320 4130348
+    WhatsApp 0320 4130348
   </div>
 </aside>
 
@@ -1034,14 +1034,13 @@ footer li a{display:inline-block;padding:4px 0}
       <div class="sec-head">
         <div>
           <span class="eyebrow">Get in touch</span>
-          <h2>Visit or message us</h2>
+          <h2>Message us</h2>
         </div>
       </div>
       <div class="contact">
         <div>
           <h3>Shop</h3>
           <p>City Garments</p>
-          <p>Karim Block, Allama Iqbal Town</p>
           <p>Lahore, Pakistan</p>
         </div>
         <div>
@@ -1126,7 +1125,6 @@ footer li a{display:inline-block;padding:4px 0}
             <details open><summary>Details</summary><p id="pdpDetails"></p></details>
             <details><summary>Delivery &amp; payment</summary><p>Cash on delivery only, anywhere in Pakistan. Delivery is Rs. 300 inside Lahore and Rs. 350 everywhere else — one flat rate, whatever you order. We check the piece is still in stock before it leaves the shop.</p></details>
             <details><summary>Exchange</summary><p>Exchange within 7 days of delivery. Return delivery is paid by the customer. WhatsApp 0320 4130348 with your order details to start one.</p></details>
-            <details><summary>Visit the shop</summary><p>City Garments, Karim Block, Allama Iqbal Town, Lahore. Come in and try it on before you buy.</p></details>
           </div>
         </div>
       </div>
@@ -1250,7 +1248,7 @@ footer li a{display:inline-block;padding:4px 0}
   <section class="band">
     <div class="wrap">
       <div class="ok">
-        <p class="print-only">City Garments &middot; Allama Iqbal Town, Lahore &middot; WhatsApp 0320 4130348 &middot; citygarments.pk</p>
+        <p class="print-only">City Garments &middot; Lahore &middot; WhatsApp 0320 4130348 &middot; citygarments.pk</p>
         <div class="ok-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
         <h1>Order placed</h1>
         <p class="ok-no">Your order number<b id="okNo">&nbsp;</b></p>
@@ -2658,14 +2656,13 @@ route();
   "@context": "https://schema.org",
   "@type": "ClothingStore",
   "name": "City Garments",
-  "description": "Export-surplus menswear sold one piece at a time from Allama Iqbal Town, Lahore.",
+  "description": "Export-surplus menswear sold one piece at a time from Lahore.",
   "url": "https://citygarments.pk/",
   "image": "https://citygarments.pk/img/og-cover.jpg",
   "telephone": "+92-320-4130348",
   "priceRange": "Rs. 4,500 - Rs. 17,500",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "Karim Block, Allama Iqbal Town",
     "addressLocality": "Lahore",
     "addressCountry": "PK"
   },
