@@ -65,7 +65,7 @@
 html{-webkit-text-size-adjust:100%}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
 img{display:block;max-width:100%;height:auto}
 a{color:inherit}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -81,12 +81,26 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
 .price{font-variant-numeric:tabular-nums}
 
 /* ---------- announcement + header ---------- */
-.topbar{background:var(--surface);color:var(--text)}
-.topbar .wrap{padding-block:7px;display:flex;justify-content:center;gap:10px;text-align:center}
-.topbar p{margin:0;font-family:var(--font-display);font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:500}
+/* The sale ticker. Without script it is one centred line. With script the run is repeated until
+   it is wider than the screen, a twin is set beside it, and the track slides left by exactly one
+   run, so the loop has no seam. It moves only when the visitor has not asked for less motion. */
+.topbar{background:var(--surface);color:var(--text);overflow:hidden;border-bottom:1px solid var(--line)}
+.tb-track{display:flex;justify-content:center}
+.tb-run{display:flex;flex-wrap:wrap;justify-content:center;margin:0;padding:7px 0;list-style:none}
+.tb-run li{position:relative;font-family:var(--font-display);font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:500;white-space:nowrap;padding-inline:22px}
+.tb-run li::after{content:"";position:absolute;right:-2px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;background:var(--muted)}
+.topbar.is-live .tb-track{width:max-content;justify-content:flex-start;animation:tbSlide 40s linear infinite;will-change:transform}
+.topbar.is-live .tb-run{flex:none;flex-wrap:nowrap}
+.topbar.is-live:hover .tb-track{animation-play-state:paused}
+@keyframes tbSlide{to{transform:translateX(-50%)}}
 
 .site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg);
-  border-bottom:1px solid var(--line);transition:box-shadow .2s ease}
+  border-bottom:1px solid var(--line);transition:transform .38s cubic-bezier(.2,.7,.2,1),box-shadow .2s ease,background .25s ease,margin-bottom .2s ease}
+/* Scrolling down the page tucks the header away; the first move back up returns it. */
+.site-header.tucked{transform:translateY(-110%)}
+/* The shrunk header is 8px shorter. It hands those 8px back as a margin, so the page below
+   never moves when it shrinks and the browser has no reason to nudge the scroll position. */
+.site-header.shrunk{margin-bottom:8px}
 .site-header .wrap{display:flex;align-items:center;gap:12px;padding-block:9px;transition:padding .2s ease}
 .site-header.shrunk .wrap{padding-block:5px}
 .site-header.shrunk{box-shadow:0 2px 16px rgba(0,0,0,.35)}
@@ -102,7 +116,7 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
 .icon-btn:hover{background:var(--surface)}
 .icon-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .cart-count{position:absolute;top:3px;right:1px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:10.5px;font-weight:600;display:grid;place-items:center;font-variant-numeric:tabular-nums}
-@media (min-width:900px){ .burger{display:none} .mainnav{display:flex} }
+@media (min-width:900px){ .mainnav{display:flex} }
 
 .searchbar{border-bottom:1px solid var(--line);background:var(--surface)}
 .searchbar .wrap{padding-block:12px;display:flex;gap:10px}
@@ -111,20 +125,46 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
 /* ---------- mobile drawer ---------- */
 .scrim{position:fixed;inset:0;background:rgba(17,20,28,.6);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s}
 .scrim.on{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);background:var(--bg);z-index:80;
-  transform:translateX(-100%);transition:transform .28s ease;display:flex;flex-direction:column;
-  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px)}
-.drawer.on{transform:none}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
-.drawer nav{display:flex;flex-direction:column;padding:8px 0}
-.drawer nav a{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:14px 18px;border-bottom:1px solid var(--line)}
+/* The menu is a full-screen panel: large serif links on the left, one featured piece beside
+   them. While it is closed it is not just off-screen but hidden, so Tab never lands inside it. */
+.drawer{position:fixed;inset:0;background:var(--bg);z-index:80;display:flex;flex-direction:column;overflow-y:auto;
+  opacity:0;visibility:hidden;transition:opacity .32s ease,visibility 0s linear .32s;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.on{opacity:1;visibility:visible;transition:opacity .32s ease,visibility 0s}
+body.nav-open{overflow:hidden}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line)}
+.drawer-body{flex:1;display:grid;gap:28px;align-content:start;width:100%;max-width:1160px;margin-inline:auto;padding:26px 22px 30px}
+@media (min-width:860px){.drawer-body{grid-template-columns:1.25fr .75fr;align-items:center;align-content:center;gap:56px;padding-block:40px}}
+.drawer nav{display:flex;flex-direction:column;gap:2px}
+.drawer nav a{font-family:var(--font-serif);font-size:clamp(32px,6.2vw,58px);font-weight:400;line-height:1.14;letter-spacing:-.012em;
+  text-decoration:none;padding:5px 0;width:fit-content}
 .drawer nav a:hover{color:var(--accent)}
-.drawer-foot{margin-top:auto;padding:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.nav-feature{display:grid;grid-template-columns:104px 1fr;gap:4px 16px;align-content:center;text-decoration:none;max-width:420px}
+.nav-feature img{grid-row:1 / span 4;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius-sm);background:var(--surface)}
+.nav-feature .eyebrow{align-self:end}
+.nav-feature b{font-family:var(--font-serif);font-size:21px;font-weight:500;line-height:1.2}
+.nav-feature .link-arrow{width:fit-content;margin-top:6px}
+@media (min-width:860px){
+  .nav-feature{grid-template-columns:1fr;gap:6px;max-width:330px;justify-self:end}
+  .nav-feature img{grid-row:auto;border-radius:var(--radius);margin-bottom:10px}
+  .nav-feature b{font-size:25px}
+}
+.drawer-foot{padding:16px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+/* Links and the featured piece rise in one after another as the panel opens. */
+@media (prefers-reduced-motion: no-preference){
+  .drawer nav a,.nav-feature{opacity:0;transform:translateY(18px)}
+  .drawer.on nav a,.drawer.on .nav-feature{opacity:1;transform:none;
+    transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1),color .15s ease;transition-delay:calc(.07s + var(--i,0) * .05s),calc(.07s + var(--i,0) * .05s),0s}
+  .drawer nav a:nth-child(2){--i:1}.drawer nav a:nth-child(3){--i:2}.drawer nav a:nth-child(4){--i:3}
+  .drawer nav a:nth-child(5){--i:4}.drawer nav a:nth-child(6){--i:5}.drawer nav a:nth-child(7){--i:6}
+  .drawer.on .nav-feature{--i:5}
+}
 
 /* ---------- hero ---------- */
 .hero-full{position:relative;background:var(--surface);line-height:0;overflow:hidden}
 .hero-slide{position:absolute;inset:0;opacity:0;overflow:hidden;
-  transition:opacity .8s ease;pointer-events:none}
+  transition:opacity 1.1s ease;pointer-events:none}
 .hero-slide:first-child{position:relative}
 .hero-slide.is-on{opacity:1;pointer-events:auto}
 .hero-full img{width:100%;aspect-ratio:1/1;max-height:460px;object-fit:cover;object-position:50% 10%}
@@ -133,10 +173,32 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
 @keyframes heroZoom{from{transform:scale(1.07)}to{transform:scale(1)}}
 .hero-dots{position:absolute;z-index:3;display:flex;gap:6px;
   right:max(16px,env(safe-area-inset-right,0px));bottom:14px}
-.hero-dots button{width:26px;height:3px;padding:0;border-radius:2px;
-  background:rgba(242,238,230,.38);transition:background .25s ease}
-.hero-dots button[aria-current="true"]{background:var(--text)}
-.hero-dots button:hover{background:rgba(242,238,230,.75)}
+/* Each slide has a bar. The current one fills over the time the slide is held, and simply
+   stays full while the slideshow is paused or motion is switched off. */
+.hero-dots button{width:34px;height:3px;padding:0;border-radius:2px;
+  background:rgba(242,238,230,.3);transition:background .25s ease}
+.hero-dots button::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--text);
+  transform:scaleX(0);transform-origin:left center}
+.hero-dots button[aria-current="true"]::before{transform:scaleX(1)}
+.hero-dots button.run::before{animation:heroFill var(--hero-hold,5.5s) linear both}
+@keyframes heroFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.hero-dots button:hover{background:rgba(242,238,230,.6)}
+/* The words of a slide arrive in order: label, then the headline one word after another from
+   behind a mask, then the line of text and the buttons. Only after the script has split the
+   headline (.is-live), and only for visitors who have not asked for less motion. */
+@media (prefers-reduced-motion: no-preference){
+  .hero-full.is-live .hero-overlay .wrap > *{opacity:0;transition:opacity .35s ease}
+  .hero-full.is-live .hero-overlay .wrap > :not(h1):not(h2){transform:translateY(16px)}
+  .hero-full.is-live .txt-on .hero-overlay .wrap > *{opacity:1;transform:none;
+    transition:opacity .7s ease var(--d,0s),transform .9s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
+  .hero-full.is-live .txt-on .hero-overlay .wrap > :nth-child(1){--d:.15s}
+  .hero-full.is-live .txt-on .hero-overlay .wrap > :nth-child(2){--d:.2s}
+  .hero-full.is-live .txt-on .hero-overlay .wrap > :nth-child(3){--d:.62s}
+  .hero-full.is-live .txt-on .hero-overlay .wrap > :nth-child(4){--d:.78s}
+  .hw{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.16em;margin-bottom:-.16em}
+  .hw > span{display:inline-block;transform:translateY(118%)}
+  .txt-on .hw > span{transform:none;transition:transform 1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(.26s + var(--i,0) * .09s)}
+}
 @media (prefers-reduced-motion: reduce){
   .hero-slide{transition:none}
   .hero-slide.is-on img{animation:none}
@@ -530,7 +592,7 @@ footer li a{display:inline-block;padding:4px 0}
 
 /* ---------- frosted glass ---------- */
 @supports ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-  .site-header{background:var(--glass);
+  .site-header.shrunk{background:var(--glass);
     -webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
   .gal-nav,.rail-nav,.gal-zoom,.gal-count,.badge,.quick,.quickadd{
     background:var(--glass);border-color:var(--glass-line);
@@ -558,9 +620,8 @@ footer li a{display:inline-block;padding:4px 0}
     gap:10px;scroll-snap-type:x mandatory}
   /* phones swipe the rails, so the arrows only get in the way */
   .rail-nav{display:none}
-  .topbar p{font-size:9.5px;letter-spacing:.05em;white-space:nowrap}
-  .tb-long{display:none}
-  .topbar .wrap{padding-block:6px}
+  .tb-run{padding:6px 0}
+  .tb-run li{font-size:9.5px;letter-spacing:.06em;padding-inline:15px}
   /* bigger tap targets */
   .burger{width:42px;height:42px;margin-left:-10px}
   .icon-btn{width:42px;height:42px}
@@ -572,7 +633,6 @@ footer li a{display:inline-block;padding:4px 0}
   .sec-head .link{font-size:11px}
   /* cart and menu drawers take the whole phone screen */
   .cart{width:100%;max-width:none}
-  .drawer{width:min(86vw,330px)}
   /* product detail: gallery first, actions reachable */
   .pdp-grid{gap:16px}
   .pdp-actions .btn{width:100%}
@@ -605,8 +665,6 @@ footer li a{display:inline-block;padding:4px 0}
 
 <a class="skip" href="#top">Skip to content</a>
 
-<div class="topbar"><div class="wrap"><p>Blessed Friday Sale · Leather jackets now Rs. 17,500<span class="tb-long"> · Cash on delivery · 7-day exchange · Lahore Rs. 300 · rest of Pakistan Rs. 350</span></p></div></div>
-
 <header class="site-header">
   <div class="wrap">
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span></button>
@@ -631,6 +689,17 @@ footer li a{display:inline-block;padding:4px 0}
   </div>
 </header>
 
+<div class="topbar" id="topbar" role="note" aria-label="Shop notices">
+  <div class="tb-track">
+    <ul class="tb-run">
+      <li>Blessed Friday Sale · Leather jackets now Rs. 17,500</li>
+      <li>Cash on delivery</li>
+      <li>7-day exchange</li>
+      <li>Lahore Rs. 300 · rest of Pakistan Rs. 350</li>
+    </ul>
+  </div>
+</div>
+
 <div class="searchbar" id="searchbar" hidden>
   <div class="wrap">
     <input id="searchInput" type="search" placeholder="Search by name or code, e.g. CG-J01" aria-label="Search products">
@@ -639,20 +708,24 @@ footer li a{display:inline-block;padding:4px 0}
 
 <div class="scrim" id="scrim"></div>
 
-<aside class="drawer" id="navDrawer" aria-label="Menu" aria-hidden="true">
+<aside class="drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <div class="drawer-head">
     <span class="eyebrow">Menu</span>
     <button class="icon-btn" data-close-nav aria-label="Close menu">&#10005;</button>
   </div>
-  <nav>
-    <a href="#top" data-close-nav>Home</a>
-    <a href="#c-all" data-close-nav>New In</a>
-    <a href="#c-leather" data-close-nav>Leather Jackets</a>
-    <a href="#c-jackets" data-close-nav>Jackets</a>
-    <a href="#c-shackets" data-close-nav>Shackets</a>
-    <a href="#c-footwear" data-close-nav>Footwear</a>
-    <a href="#contact" data-close-nav>Contact</a>
-  </nav>
+  <div class="drawer-body">
+    <nav aria-label="Menu">
+      <a href="#top" data-close-nav>Home</a>
+      <a href="#c-all" data-close-nav>New In</a>
+      <a href="#c-leather" data-close-nav>Leather Jackets</a>
+      <a href="#c-jackets" data-close-nav>Jackets</a>
+      <a href="#c-shackets" data-close-nav>Shackets</a>
+      <a href="#c-footwear" data-close-nav>Footwear</a>
+      <a href="#contact" data-close-nav>Contact</a>
+    </nav>
+    <!-- Filled when the menu opens with the first leather piece still in stock. -->
+    <a class="nav-feature" id="navFeature" href="#c-leather" data-close-nav hidden></a>
+  </div>
   <div class="drawer-foot">
     Karim Block, Allama Iqbal Town, Lahore<br>WhatsApp 0320 4130348
   </div>
@@ -1443,10 +1516,47 @@ searchInput.addEventListener('input', () => {
 const scrim = document.getElementById('scrim');
 const navDrawer = document.getElementById('navDrawer');
 const cartDrawer = document.getElementById('cartDrawer');
-function openNav(){ navDrawer.classList.add('on'); navDrawer.setAttribute('aria-hidden','false'); scrim.classList.add('on'); document.getElementById('burger').setAttribute('aria-expanded','true'); }
-function closeNav(){ navDrawer.classList.remove('on'); navDrawer.setAttribute('aria-hidden','true'); if(!cartDrawer.classList.contains('on')) scrim.classList.remove('on'); document.getElementById('burger').setAttribute('aria-expanded','false'); }
-document.getElementById('burger').addEventListener('click', openNav);
+const burger = document.getElementById('burger');
+let navReturn = null;
+/* Keeps Tab inside an open panel: past the last control it wraps to the first, and back. */
+function trapTab(box, e){
+  if (e.key !== 'Tab') return;
+  const stops = [...box.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])')]
+    .filter(el => el.offsetParent !== null);
+  if (!stops.length) return;
+  const first = stops[0], last = stops[stops.length - 1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+}
+/* The menu shows one piece beside its links: the first leather jacket that can still be bought. */
+function navFeature(){
+  const box = document.getElementById('navFeature');
+  const p = PRODUCTS.find(x => x.cat === 'leather' && !allGone(x)) || PRODUCTS.find(x => !allGone(x));
+  if (!p){ box.hidden = true; return; }
+  box.href = '#p-' + p.code;
+  box.innerHTML = '<img src="' + p.img + '" alt="' + esc(p.name + ' in ' + p.colour) + '" width="800" height="1000" loading="lazy">' +
+    '<span class="eyebrow">Featured</span><b>' + esc(p.name) + '</b><span class="link-arrow">View the piece</span>';
+  box.hidden = false;
+}
+function openNav(){
+  if (navDrawer.classList.contains('on')) return;
+  navReturn = document.activeElement;
+  navFeature();
+  navDrawer.classList.add('on'); navDrawer.setAttribute('aria-hidden','false');
+  document.body.classList.add('nav-open');
+  burger.setAttribute('aria-expanded','true');
+  navDrawer.querySelector('[data-close-nav]').focus();
+}
+function closeNav(){
+  const wasOpen = navDrawer.classList.contains('on');
+  navDrawer.classList.remove('on'); navDrawer.setAttribute('aria-hidden','true');
+  document.body.classList.remove('nav-open');
+  burger.setAttribute('aria-expanded','false');
+  if (wasOpen && navReturn && document.contains(navReturn)) navReturn.focus();
+}
+burger.addEventListener('click', openNav);
 document.querySelectorAll('[data-close-nav]').forEach(el => el.addEventListener('click', closeNav));
+navDrawer.addEventListener('keydown', e => trapTab(navDrawer, e));
 
 /* ---------- cart drawer ---------- */
 let lastFocus = null;
@@ -1788,9 +1898,37 @@ document.addEventListener('click', e => {
 });
 
 const header = document.querySelector('.site-header');
+let headerY = window.scrollY;
 addEventListener('scroll', () => {
-  header.classList.toggle('shrunk', window.scrollY > 40);
+  const y = window.scrollY;
+  header.classList.toggle('shrunk', y > 40);
+  /* Near the top, or while the header is in use, it always shows. Otherwise it follows the
+     direction of travel, ignoring moves too small to be meant. */
+  const inUse = cartDrawer.classList.contains('on') || !searchbar.hidden || header.contains(document.activeElement);
+  if (y < 160 || inUse){ header.classList.remove('tucked'); headerY = y; return; }
+  if (Math.abs(y - headerY) < 8) return;
+  header.classList.toggle('tucked', y > headerY);
+  headerY = y;
 }, {passive:true});
+header.addEventListener('focusin', () => header.classList.remove('tucked'));
+
+/* ---------- sale ticker ---------- */
+(function(){
+  const bar = document.getElementById('topbar');
+  if (!bar || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const track = bar.querySelector('.tb-track'), run = bar.querySelector('.tb-run');
+  const items = [...run.children];
+  bar.classList.add('is-live');
+  /* One run has to be wider than the widest this window can get, or a gap would show. */
+  const need = Math.max(window.innerWidth, window.screen.width || 0) * 1.1;
+  for (let n = 0; run.scrollWidth < need && n < 10; n++){
+    items.forEach(li => { const c = li.cloneNode(true); c.setAttribute('aria-hidden', 'true'); run.appendChild(c); });
+  }
+  const twin = run.cloneNode(true);
+  twin.setAttribute('aria-hidden', 'true');
+  track.appendChild(twin);
+  track.style.animationDuration = Math.round(run.scrollWidth / 46) + 's';     /* about 46 px a second */
+})();
 
 /* ---------- newsletter ---------- */
 document.getElementById('newsForm').addEventListener('submit', e => {
@@ -1959,29 +2097,47 @@ function showHome(anchor){
   if (slides.length < 2 || !dotBox) return;
 
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const HOLD = 3400;
+  const HOLD = 5500;
+  const hero = document.querySelector('.hero-full');
   let at = 0, timer = null, paused = false, seen = true;
 
   dotBox.innerHTML = slides.map((s,i) =>
     '<button type="button" data-hero="' + i + '" aria-current="' + (i === 0) +
     '" aria-label="Show slide ' + (i+1) + ' of ' + slides.length + '"></button>').join('');
   const dots = [...dotBox.children];
+  hero.style.setProperty('--hero-hold', HOLD + 'ms');
+
+  /* Each headline word goes behind its own mask so it can rise into place. The heading keeps
+     its full text as a label, so a screen reader still hears one sentence. */
+  hero.querySelectorAll('.hero-overlay h1,.hero-overlay h2').forEach(h => {
+    const text = h.textContent.trim();
+    h.setAttribute('aria-label', text);
+    h.innerHTML = text.split(/\s+/).map((w,i) =>
+      '<span class="hw" aria-hidden="true"><span style="--i:' + i + '">' + esc(w) + '</span></span>').join(' ');
+  });
+  hero.classList.add('is-live');
 
   function show(i){
     at = (i + slides.length) % slides.length;
     slides.forEach((s,n) => {
       const on = n === at;
       s.classList.toggle('is-on', on);
+      s.classList.remove('txt-on');
       s.setAttribute('aria-hidden', String(!on));
       if (on){ const img = s.querySelector('img'); if (img) img.loading = 'eager'; }
     });
+    void hero.offsetWidth;                       /* let the hidden state apply before the words come in */
+    slides[at].classList.add('txt-on');
     dots.forEach((d,n) => d.setAttribute('aria-current', String(n === at)));
   }
-  function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+  function stop(){ if (timer){ clearTimeout(timer); timer = null; } }
   function start(){
     stop();
+    dots.forEach(d => d.classList.remove('run'));
     if (paused || !seen || calm.matches) return;
-    timer = setInterval(() => show(at + 1), HOLD);
+    void dots[at].offsetWidth;                   /* restart the bar from empty */
+    dots[at].classList.add('run');
+    timer = setTimeout(() => { show(at + 1); start(); }, HOLD);
   }
 
   dotBox.addEventListener('click', e => {
@@ -1989,7 +2145,19 @@ function showHome(anchor){
     show(+b.dataset.hero); start();
   });
 
-  const hero = document.querySelector('.hero-full');
+  /* A sideways swipe on a phone moves one slide; an up-and-down drag is left to the page. */
+  let sx = 0, sy = 0;
+  hero.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+  hero.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4){ show(at + (dx < 0 ? 1 : -1)); start(); }
+  }, {passive:true});
+  hero.addEventListener('keydown', e => {
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || !dotBox.contains(e.target)) return;
+    show(at + (e.key === 'ArrowRight' ? 1 : -1)); start();
+    dots[at].focus();
+  });
+
   const hold = on => { paused = on; start(); };
   if (window.matchMedia('(hover:hover)').matches){
     hero.addEventListener('mouseenter', () => hold(true));
