@@ -282,12 +282,12 @@ section{scroll-margin-top:80px}
 .tile:hover .link-arrow{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
 
 /* ---------- shop the mood ---------- */
-/* Kept small on purpose: four across from a large phone up, and two short tiles a row below that. */
+/* Kept small on purpose, and never in one line: two tiles a row, two rows, set in the middle
+   of the page (the width is capped further down). */
 .moods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-@media (min-width:560px){.moods{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+@media (min-width:560px){.moods{gap:12px}}
 .mood{position:relative;display:block;overflow:hidden;border-radius:var(--radius);background:var(--surface);
   text-decoration:none;aspect-ratio:1/1;line-height:0}
-@media (min-width:560px){.mood{aspect-ratio:4/5}}
 .mood-img{position:absolute;inset:0;display:block;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
 /* The picture is held 14% larger than its frame: that margin is what it drifts through. */
 .mood-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform}
@@ -299,7 +299,7 @@ section{scroll-margin-top:80px}
 .mood .link-arrow i{display:inline-block;font-style:normal;margin-left:3px}
 @media (min-width:860px){.mood-copy{padding:16px 16px 18px}}
 /* The grid is capped so the tiles never grow into posters on a wide screen. */
-.moods{max-width:980px;margin-inline:auto}
+.moods{max-width:440px;margin-inline:auto}
 @media (hover:hover) and (pointer:fine){
   .mood:hover .mood-img{transform:scale(1.06)}
   .mood .link-arrow i{opacity:0;transform:translateX(-9px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
@@ -412,8 +412,10 @@ section{scroll-margin-top:80px}
 @media (hover:none){.quick{position:static;transform:none;border:1px solid var(--line);border-radius:999px;margin-top:9px;text-align:center}}
 .card-body{padding:9px 1px 0;display:flex;flex-direction:column;gap:2px}
 .card-body h3{font-family:var(--font-display);font-size:11px;font-weight:600;line-height:1.4;letter-spacing:.09em;text-transform:uppercase}
-.card .price .was{font-size:11.5px;margin-left:6px}
-.card .price .off{font-size:10px;letter-spacing:.07em;margin-left:5px}
+/* The price on a card is small and plain; it is not what the card is for. */
+.card .card-price{font-family:var(--font-body);font-weight:500;font-size:11.5px;letter-spacing:.01em;margin-top:0}
+.card .price .was{font-size:11px;font-weight:400;margin-left:5px}
+.card .price .off{font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;margin-left:5px;color:var(--muted)}
 .card-title-link{text-decoration:none;cursor:pointer}
 .card-title-link:hover h3{text-decoration:underline}
 .card-meta{font-size:11px;color:var(--muted);letter-spacing:.02em}
@@ -765,10 +767,10 @@ footer li a{display:inline-block;padding:4px 0}
 <div class="topbar" id="topbar" role="note" aria-label="Shop notices">
   <div class="tb-track">
     <ul class="tb-run">
-      <li>Blessed Friday Sale · Leather jackets now Rs. 17,500</li>
+      <li>Blessed Friday Sale · now on</li>
       <li>Cash on delivery</li>
       <li>7-day exchange</li>
-      <li>Lahore Rs. 300 · rest of Pakistan Rs. 350</li>
+      <li>Delivery across Pakistan</li>
     </ul>
   </div>
 </div>
@@ -899,7 +901,7 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Genuine leather</span>
           <h2>Leather Jackets</h2>
-          <p>Blessed Friday Sale · now Rs. 17,500, was Rs. 20,000</p>
+          <p>Blessed Friday Sale · now on</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -908,15 +910,13 @@ footer li a{display:inline-block;padding:4px 0}
         <button class="rail-nav next" type="button" data-rail="railLeather" data-dir="1" aria-label="More products" hidden>&#8250;</button>
       </div>
       <a class="viewall" href="#c-leather">View all 44</a>
-      <!-- Written for the buyer who has just read the price: what the money buys, in
-           claims the shop can stand behind. The saving quoted is the owner's: he priced
-           this lot at Rs. 20,000 a piece before the Blessed Friday Sale, and set the same
-           two figures for the pieces added on 24 Nov 2026. -->
+      <!-- What the money buys, in claims the shop can stand behind. No figure is printed here:
+           the owner asked for prices to be kept off banners, headings and notes, so they appear
+           as one quiet line on a card and in full on the product page. -->
       <p class="sec-note">Men's genuine leather jackets in Lahore, delivered across Pakistan. Every jacket here is
         real leather, lab tested &mdash; not PU and not rexine &mdash; in biker, bomber, cafe racer, trucker and hooded cuts.
-        There is one piece of each design, and real leather is bought once and worn for years. In the
-        Blessed Friday Sale every jacket is Rs. 17,500 instead of Rs. 20,000, and you pay cash when it
-        reaches your door.</p>
+        There is one piece of each design, and real leather is bought once and worn for years. Every
+        jacket is reduced in the Blessed Friday Sale, and you pay cash when it reaches your door.</p>
     </div>
   </section>
 
@@ -1460,6 +1460,12 @@ const saveLabel = p => wholeOff(p) ? Math.round(offOf(p)) + '% off' : 'Save ' + 
 const priceHtml = p => p.was
   ? rs(p.price) + ' <s class="was">' + rs(p.was) + '</s> <span class="off">' + saveLabel(p) + '</span>'
   : rs(p.price);
+/* On a card the price is one quiet line, the way a catalogue prints it: what the piece costs,
+   what it cost before, and the percentage only when that is a round number. The rupees saved
+   are spelt out on the product page, not here. */
+const cardPrice = p => rs(p.price) + (p.was
+  ? ' <s class="was">' + rs(p.was) + '</s>' + (wholeOff(p) ? ' <span class="off">-' + Math.round(offOf(p)) + '%</span>' : '')
+  : '');
 const byCode = c => PRODUCTS.find(p => p.code === c);
 
 /* ---------- stock ----------
@@ -1551,7 +1557,7 @@ function cardHtml(p){
     '</div>' +
     '<div class="card-body">' +
       '<a class="card-title-link" href="' + link + '"><h3>' + p.name + '</h3></a>' +
-      '<span class="card-price price">' + priceHtml(p) + '</span>' +
+      '<span class="card-price price">' + cardPrice(p) + '</span>' +
       '<span class="card-meta">' + p.code + ' · ' + meta + '</span>' +
       '<span class="swatches" aria-hidden="true">' + dots + '</span>' +
     '</div></article>';
@@ -1574,7 +1580,7 @@ function renderGrid(){
 const CATS = {
   all:      {title:'All products', eyebrow:'The full rail'},
   leather:  {title:'Leather Jackets', eyebrow:'Genuine leather',
-             intro:'Blessed Friday Sale: now Rs. 17,500, was Rs. 20,000. 100% genuine leather, lab tested, one piece of each design.'},
+             intro:'Blessed Friday Sale now on. 100% genuine leather, lab tested, one piece of each design.'},
   jackets:  {title:'Jackets',      eyebrow:'Outerwear'},
   shackets: {title:'Shackets',     eyebrow:'Layering'},
   footwear: {title:'Footwear',     eyebrow:'Shoes'}
@@ -1608,7 +1614,7 @@ function renderLooks(){
       '<button class="look-dot" style="left:45%;top:26%" data-open="' + p.code + '" aria-label="Shop the ' + esc(p.name) + ' in ' + esc(p.colour) + '"><span></span></button>' +
     '</div><div class="card-body">' +
       '<a class="card-title-link" href="#p-' + p.code + '"><h3>' + p.name + '</h3></a>' +
-      '<span class="card-price price">' + priceHtml(p) + '</span>' +
+      '<span class="card-price price">' + cardPrice(p) + '</span>' +
       '<span class="card-meta">' + p.code + ' · ' + p.colour + '</span>' +
     '</div></article>').join('');
   el.classList.toggle('peek', list.length > 4);
