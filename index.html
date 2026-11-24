@@ -289,9 +289,19 @@ section{scroll-margin-top:80px}
 .rail::-webkit-scrollbar{display:none}
 .rail > *{scroll-snap-align:start;min-width:0}
 @media (min-width:560px){.rail{grid-auto-columns:38%}}
+/* From tablet up a rail is still one row. It shows --cols cards and, when it holds more than
+   that (.peek), a slice of the next one, so it is plain there is more to the side. */
 @media (min-width:760px){
-  .rail{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));
-    overflow:visible;gap:22px 14px}
+  .rail{gap:14px;grid-auto-columns:calc((100% - (var(--cols,4) - 1) * 14px) / var(--cols,4))}
+  .rail.peek{grid-auto-columns:calc((100% - var(--cols,4) * 14px) / (var(--cols,4) + .34))}
+}
+/* With a mouse the row can be thrown sideways: press, drag, let go. While it is being dragged
+   the cards under the pointer are inert, so letting go never opens a product by accident. */
+.rail img{-webkit-user-drag:none}
+@media (hover:hover) and (pointer:fine){
+  .rail.peek{cursor:grab}
+  .rail.dragging{cursor:grabbing;scroll-snap-type:none;-webkit-user-select:none;user-select:none}
+  .rail.dragging a,.rail.dragging button{pointer-events:none}
 }
 .rail-nav{position:absolute;top:43%;transform:translateY(-50%);z-index:3;
   width:40px;height:40px;border-radius:50%;background:var(--bg);border:1px solid var(--line);
@@ -322,6 +332,12 @@ section{scroll-margin-top:80px}
 .card-media img{width:100%;aspect-ratio:4/5;object-fit:cover}
 .card-media .alt{position:absolute;inset:0;opacity:0;transition:opacity .35s ease}
 .card:hover .card-media .alt{opacity:1}
+/* Under a mouse the photograph eases a little closer; a touch screen has no hover to show it. */
+@media (hover:hover) and (pointer:fine){
+  .card-media img{transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+  .card-media .alt{transition:opacity .35s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .card-media img{transform:scale(1.035)}
+}
 .quickadd{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);border-radius:0 0 var(--radius) var(--radius);
   padding:7px 8px;display:none;align-items:center;gap:7px;transform:translateY(100%);transition:transform .22s ease}
 @media (hover:hover){
@@ -335,9 +351,10 @@ section{scroll-margin-top:80px}
 .qa{border:1px solid var(--line);border-radius:999px;min-width:27px;padding:4px 7px;font-family:var(--font-display);
   font-size:10.5px;font-weight:600;line-height:1.1}
 .qa:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+.qa.qv{margin-left:auto;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;font-size:9.5px;padding:5px 9px}
 .qa[disabled]{opacity:.35;text-decoration:line-through;cursor:not-allowed}
 .qa[disabled]:hover{background:transparent;color:inherit;border-color:var(--line)}
-.swatches{display:flex;gap:4px;margin-bottom:2px}
+.swatches{display:flex;gap:4px;margin-top:5px}
 .dot{width:9px;height:9px;border-radius:50%;border:1px solid rgba(128,128,128,.4);display:block}
 .badge{position:absolute;top:10px;left:10px;border-radius:999px;background:var(--surface);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-strong);font-family:var(--font-display);
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px}
@@ -349,7 +366,9 @@ section{scroll-margin-top:80px}
 .card:hover .quick,.card:focus-within .quick{transform:none}
 @media (hover:none){.quick{position:static;transform:none;border:1px solid var(--line);border-radius:999px;margin-top:9px;text-align:center}}
 .card-body{padding:9px 1px 0;display:flex;flex-direction:column;gap:2px}
-.card-body h3{font-family:var(--font-body);font-size:12.5px;font-weight:600;line-height:1.35;letter-spacing:.01em}
+.card-body h3{font-family:var(--font-display);font-size:11px;font-weight:600;line-height:1.4;letter-spacing:.09em;text-transform:uppercase}
+.card .price .was{font-size:11.5px;margin-left:6px}
+.card .price .off{font-size:10px;letter-spacing:.07em;margin-left:5px}
 .card-title-link{text-decoration:none;cursor:pointer}
 .card-title-link:hover h3{text-decoration:underline}
 .card-meta{font-size:11px;color:var(--muted);letter-spacing:.02em}
@@ -500,13 +519,22 @@ body.lb-open{overflow:hidden}
 .acc p{margin:0 0 12px;font-size:12.5px;color:var(--muted)}
 
 /* ---------- product modal ---------- */
-.modal{position:fixed;inset:0;z-index:85;display:grid;place-items:center;padding:16px;overflow-y:auto}
-.modal-card{background:var(--bg);width:min(880px,100%);max-height:92vh;overflow-y:auto;display:grid;box-shadow:var(--shadow)}
+.modal{position:fixed;inset:0;z-index:85;display:grid;place-items:center;padding:16px;overflow-y:auto;background:rgba(17,20,28,.76)}
+.modal-card{background:var(--bg);width:min(880px,100%);max-height:92vh;overflow-y:auto;display:grid;box-shadow:var(--shadow);
+  border:1px solid var(--line);border-radius:var(--radius)}
+body.modal-open{overflow:hidden}
+/* Quick view arrives rather than appears: the veil fades, the card rises a little into place. */
+@media (prefers-reduced-motion: no-preference){
+  .modal:not([hidden]){animation:veilIn .28s ease both}
+  .modal:not([hidden]) .modal-card{animation:cardIn .5s cubic-bezier(.2,.7,.2,1) both}
+}
+@keyframes veilIn{from{opacity:0}}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.985)}}
 @media (min-width:760px){.modal-card{grid-template-columns:1fr 1fr}}
 .modal-card img.hero-img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--surface)}
 .modal-body{padding:22px 22px 26px;display:flex;flex-direction:column;gap:12px}
 .modal-body h2{font-size:26px;font-weight:400}
-.modal-close{position:absolute;top:10px;right:12px;width:34px;height:34px;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-size:17px}
+.modal-close{position:absolute;top:10px;right:12px;width:34px;height:34px;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-size:17px;border-radius:50%;z-index:2}
 .sizes{display:flex;gap:7px;flex-wrap:wrap}
 .size{min-width:48px;border:1px solid var(--line);border-radius:999px;padding:10px 15px;
   font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.08em;transition:border-color .18s,background .18s}
@@ -1446,13 +1474,15 @@ function cardHtml(p){
       '<a class="shot" href="' + link + '" aria-label="' + p.name + ', ' + p.colour + '">' +
         '<img src="' + p.img + '" alt="' + p.name + ' in ' + p.colour + '" loading="lazy" width="800" height="1000">' + alt +
       '</a>' + badge +
-      '<div class="quickadd"><span class="qa-label">Add</span><div class="qa-row">' + qa + '</div></div>' +
+      '<div class="quickadd"><span class="qa-label">Add</span><div class="qa-row">' + qa + '</div>' +
+        '<button class="qa qv" data-open="' + p.code + '" aria-label="Quick view of ' + p.name + '">Quick view</button></div>' +
       '<button class="quick" data-open="' + p.code + '">Quick view</button>' +
     '</div>' +
     '<div class="card-body">' +
-      '<span class="swatches" aria-hidden="true">' + dots + '</span>' +
       '<a class="card-title-link" href="' + link + '"><h3>' + p.name + '</h3></a>' +
+      '<span class="card-price price">' + priceHtml(p) + '</span>' +
       '<span class="card-meta">' + p.code + ' · ' + meta + '</span>' +
+      '<span class="swatches" aria-hidden="true">' + dots + '</span>' +
     '</div></article>';
 }
 
@@ -1482,12 +1512,16 @@ const CATS = {
 function renderRails(){
   const fill = (id, cat, n) => {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = PRODUCTS.filter(p => p.cat === cat).slice(0, n).map(cardHtml).join('');
+    if (!el) return;
+    const list = PRODUCTS.filter(p => p.cat === cat).slice(0, n);
+    el.innerHTML = list.map(cardHtml).join('');
+    /* More cards than the row shows at once: let the next one peek in from the side. */
+    el.classList.toggle('peek', list.length > (parseInt(el.style.getPropertyValue('--cols'), 10) || 4));
   };
-  fill('railLeather', 'leather', 8);
+  fill('railLeather', 'leather', 10);
   fill('railJackets', 'jackets', 3);
-  fill('railShackets', 'shackets', 4);
-  fill('railFootwear', 'footwear', 4);
+  fill('railShackets', 'shackets', 6);
+  fill('railFootwear', 'footwear', 8);
 }
 
 document.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
@@ -1843,10 +1877,11 @@ document.getElementById('okCopy').addEventListener('click', async e => {
 
 /* ---------- product modal ---------- */
 const modal = document.getElementById('modal');
-let current = null, chosenSize = null;
+let current = null, chosenSize = null, modalReturn = null;
 
 function openModal(code){
   const p = byCode(code); if (!p) return;
+  if (modal.hidden) modalReturn = document.activeElement;
   current = p;
   const mLive = liveSizes(p);
   chosenSize = mLive.length === 1 ? mLive[0] : null;
@@ -1864,9 +1899,16 @@ function openModal(code){
     : '<button class="size" data-size="' + s + '" aria-pressed="' + (chosenSize === s) + '">' + sizeBtn(s) + '</button>').join('');
   syncAdd();
   modal.hidden = false;
+  document.body.classList.add('modal-open');
   document.getElementById('modalClose').focus();
 }
-function closeModal(){ modal.hidden = true; current = null; }
+function closeModal(){
+  const wasOpen = !modal.hidden;
+  modal.hidden = true; current = null;
+  document.body.classList.remove('modal-open');
+  if (wasOpen && modalReturn && document.contains(modalReturn)) modalReturn.focus();
+}
+modal.addEventListener('keydown', e => trapTab(modal, e));
 function syncAdd(){
   const btn = document.getElementById('mAdd');
   const gone = allGone(current);
@@ -1882,8 +1924,9 @@ document.getElementById('mSizes').addEventListener('click', e => {
 });
 document.getElementById('mAdd').addEventListener('click', () => {
   if (!current || !chosenSize) return;
-  addToCart(current.code, chosenSize);
-  closeModal();
+  const code = current.code, size = chosenSize;
+  closeModal();                 /* first, so the bag that opens next keeps the focus it takes */
+  addToCart(code, size);
 });
 document.getElementById('modalClose').addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
@@ -2205,6 +2248,32 @@ function wireRails(){
       if (tick) return;
       tick = requestAnimationFrame(() => { tick = null; syncRailNav(rail); });
     });
+    /* Mouse drag. Touch and trackpads already scroll the row themselves, so this is for a
+       mouse only. A press that moves less than 6px is still a click. */
+    let held = false, dragging = false, downX = 0, startLeft = 0;
+    rail.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      held = true; dragging = false; downX = e.clientX; startLeft = rail.scrollLeft;
+    });
+    addEventListener('pointermove', e => {
+      if (!held) return;
+      const dx = e.clientX - downX;
+      if (!dragging && Math.abs(dx) > 6){ dragging = true; rail.classList.add('dragging'); }
+      if (dragging) rail.scrollLeft = startLeft - dx;
+    });
+    const drop = () => {
+      if (!held) return;
+      held = false;
+      if (!dragging) return;
+      rail.classList.remove('dragging');
+      const step = railStep(rail);
+      rail.scrollTo({left: Math.round(rail.scrollLeft / step) * step, behavior:'smooth'});
+      setTimeout(() => { dragging = false; }, 0);          /* after the click that ends the drag */
+    };
+    addEventListener('pointerup', drop);
+    addEventListener('pointercancel', drop);
+    rail.addEventListener('click', e => { if (dragging){ e.preventDefault(); e.stopPropagation(); } }, true);
+    rail.addEventListener('dragstart', e => e.preventDefault());
   });
 }
 document.addEventListener('click', e => {
