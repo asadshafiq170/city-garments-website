@@ -116,7 +116,12 @@ h1,h2,h3{font-family:var(--font-serif);font-weight:500;text-wrap:balance;margin:
 .brandmark small{display:block;font-size:7.5px;letter-spacing:.28em;font-weight:500;color:var(--muted);margin-top:1px}
 .mainnav{display:none;gap:22px;margin-left:26px}
 .mainnav a{font-family:var(--font-display);font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding-block:4px;border-bottom:1.5px solid transparent}
-.mainnav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.mainnav a{position:relative}
+.mainnav a:hover{color:var(--accent)}
+/* the rule under a nav link draws itself from the left */
+.mainnav a::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:1.5px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left center;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.mainnav a:hover::after,.mainnav a:focus-visible::after{transform:scaleX(1)}
 .header-tools{margin-left:auto;display:flex;align-items:center;gap:4px}
 .icon-btn{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;position:relative}
 .icon-btn:hover{background:var(--surface)}
@@ -229,7 +234,9 @@ body.nav-open{overflow:hidden}
 
 .btn{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   padding:14px 28px;border:1.5px solid var(--accent);border-radius:999px;background:var(--accent);color:var(--on-accent);
-  text-decoration:none;display:inline-block;transition:opacity .15s,background .2s,color .2s}
+  text-decoration:none;display:inline-block;transition:opacity .15s,background .2s,color .2s,transform .12s ease}
+.btn:active{transform:scale(.975)}
+.btn[disabled]:active{transform:none}
 .btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn.ghost{background:transparent;color:var(--text);border-color:var(--text)}
 .btn.ghost:hover{background:var(--text);color:var(--bg);border-color:var(--text);opacity:1}
@@ -267,30 +274,9 @@ section{scroll-margin-top:80px}
   letter-spacing:.1em;text-transform:uppercase}
 .trust span{display:block;font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
 
-/* ---------- bento editorial ---------- */
-.bento{display:grid;gap:9px;grid-template-columns:repeat(2,1fr)}
-@media (min-width:600px){.bento{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
-  height:clamp(300px,38vw,440px);gap:12px}}
-.tile{position:relative;display:block;overflow:hidden;text-decoration:none;background:var(--surface);
-  line-height:0;min-width:0;border-radius:var(--radius)}
-.tile img{width:100%;aspect-ratio:1/1;object-fit:cover;transition:transform .6s ease}
-.tile-lg{grid-column:span 2}
-.tile-lg img{aspect-ratio:16/10}
-@media (min-width:600px){
-  .tile-lg{grid-column:span 2;grid-row:span 2}
-  .tile img,.tile-lg img{aspect-ratio:auto;height:100%}
-}
-.tile:hover img{transform:scale(1.03)}
-.tile-copy{position:absolute;left:0;right:0;bottom:0;padding:11px 13px 13px;color:var(--text);line-height:1.45;display:block;
-  background:linear-gradient(to top,rgba(17,20,28,.85),rgba(17,20,28,.08) 80%,transparent)}
-.tile-copy b{display:block;font-family:var(--font-serif);font-size:19px;font-weight:500;
-  letter-spacing:0;margin:3px 0 2px}
-.tile-lg .tile-copy{padding:16px 18px 18px}
-.tile-lg .tile-copy b{font-size:clamp(22px,3vw,32px);margin:4px 0 4px;line-height:1.1}
-.tile-sub{display:block;font-size:11.5px;color:rgba(242,238,230,.82);margin-bottom:8px}
+/* ---------- text links with a rule ---------- */
 .link-arrow{font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:.13em;
   text-transform:uppercase;color:var(--accent);border-bottom:1px solid rgba(224,162,58,.55);padding-bottom:2px}
-.tile:hover .link-arrow{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
 
 /* ---------- shop the mood ---------- */
 /* Kept small on purpose, and never in one line: two tiles a row, two rows, set in the middle
@@ -327,6 +313,14 @@ section{scroll-margin-top:80px}
 .look-dot:hover span{background:var(--accent-hover)}
 @media (prefers-reduced-motion: no-preference){.look-dot::before{animation:lookPulse 2.8s ease-out infinite}}
 @keyframes lookPulse{0%{transform:scale(.55);opacity:.9}70%,100%{transform:scale(1.55);opacity:0}}
+
+/* ---------- pictures and pages arriving ---------- */
+/* Only when the script is running (.js-img): a lazily loaded picture is clear until it has
+   arrived, then fades in over the grey of its frame. The hover picture keeps its own rule. */
+.js-img img[loading="lazy"]:not(.alt){opacity:0;transition:opacity .5s ease}
+.js-img img[loading="lazy"].is-in:not(.alt){opacity:1}
+@media (prefers-reduced-motion: no-preference){.view-in{animation:viewIn .45s ease both}}
+@keyframes viewIn{from{opacity:0}}
 
 /* ---------- scroll reveals ---------- */
 /* Sections rise into place the first time they are scrolled to, and never again. The hidden
@@ -475,12 +469,12 @@ section{scroll-margin-top:80px}
 @media (max-width:559px){#countLine{display:none}}
 
 /* ---------- newsletter ---------- */
-.news{display:grid;gap:22px;align-items:center}
+.news{display:grid;gap:26px;align-items:end;padding-block:14px}
 @media (min-width:820px){.news{grid-template-columns:1fr 1fr;gap:48px}}
-.news h2{font-size:clamp(24px,4.2vw,36px);font-weight:400;line-height:1.1}
+.news h2{font-size:clamp(28px,4.6vw,54px);font-weight:400;line-height:1.05;letter-spacing:-.01em}
 .news p{color:var(--muted);margin:8px 0 0;max-width:50ch}
 .news form{display:flex;gap:8px;flex-wrap:wrap}
-.news input{flex:1;min-width:200px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--text);padding:14px 18px;font:inherit;border-radius:999px}
+.news input{flex:1;min-width:200px;border:0;border-bottom:1.5px solid var(--line-strong);border-radius:0;background:transparent;color:var(--text);padding:14px 2px;font:inherit;font-size:15px}
 .form-note{margin:10px 0 0;font-size:12.5px;color:var(--muted);min-height:1.2em}
 .searchbar input:focus,.news input:focus{border-color:var(--accent)}
 
@@ -496,7 +490,12 @@ section{scroll-margin-top:80px}
 
 /* ---------- footer ---------- */
 footer{background:var(--surface);color:var(--text);margin-top:0;border-top:1px solid var(--line)}
-footer .wrap{padding-block:34px 26px;display:grid;gap:22px}
+footer .wrap{padding-block:40px 26px;display:grid;gap:22px}
+/* the wordmark is as wide as the page lets it be, and takes you back to the top */
+.foot-mark{grid-column:1/-1;display:block;font-family:var(--font-display);font-weight:700;text-transform:uppercase;
+  font-size:clamp(34px,10.4vw,188px);line-height:.92;letter-spacing:.02em;white-space:nowrap;overflow:hidden;margin-bottom:6px}
+footer a.foot-mark{font-size:clamp(34px,10.4vw,188px);opacity:1;color:var(--text)}
+footer a.foot-mark:hover{color:var(--text);text-decoration:none}
 @media (min-width:700px){footer .wrap{grid-template-columns:2fr 1fr 1fr 1fr}}
 footer h4{font-family:var(--font-display);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px;opacity:.72}
 footer a{color:var(--text);text-decoration:none;opacity:.9;font-size:13.5px}
@@ -506,10 +505,13 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
   display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 /* ---------- cart drawer ---------- */
+/* The bag slides in from the right. Closed, it is hidden as well as off-screen, so it cannot be
+   tabbed into; open, Tab stays inside it. */
 .cart{position:fixed;top:0;bottom:0;right:0;width:min(420px,100%);background:var(--bg);z-index:80;
-  transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;
+  transform:translateX(102%);visibility:hidden;transition:transform .45s cubic-bezier(.2,.7,.2,1),visibility 0s linear .45s;
+  display:flex;flex-direction:column;border-left:1px solid var(--line);
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
-.cart.on{transform:none}
+.cart.on{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.2,.7,.2,1),visibility 0s}
 .cart-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
 .cart-head h2{font-family:var(--font-display);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
 .cart-items{flex:1;overflow-y:auto;padding:4px 18px}
@@ -527,6 +529,7 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .row{display:flex;justify-content:space-between;font-size:13.5px}
 .row.total{font-family:var(--font-display);font-weight:700;font-size:16px;padding-top:7px;border-top:1px solid var(--line)}
 .cart-note{font-size:11.5px;color:var(--muted);margin:0}
+.cart-note b{color:var(--text);font-weight:600}
 .cart-empty{padding:46px 18px;text-align:center;color:var(--muted)}
 
 /* ---------- product detail page ---------- */
@@ -565,6 +568,20 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
 .gal-count{position:absolute;left:10px;bottom:10px;z-index:2;background:var(--bg);border-radius:999px;
   border:1px solid var(--line);padding:4px 10px;font-family:var(--font-display);
   font-size:10px;font-weight:600;letter-spacing:.1em}
+
+/* ---------- floating WhatsApp ---------- */
+.wa-float{position:fixed;z-index:60;right:max(var(--gutter),env(safe-area-inset-right,0px));
+  bottom:calc(18px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;
+  display:grid;place-items:center;background:var(--wa);color:var(--bg);box-shadow:0 6px 22px rgba(0,0,0,.35);
+  transition:transform .2s ease}
+.wa-float svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wa-float:hover{transform:scale(1.06)}
+.wa-float:active{transform:scale(.96)}
+/* a ring leaves the button once every ten seconds, and is otherwise absent */
+.wa-float::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--wa);opacity:0;pointer-events:none}
+@media (prefers-reduced-motion: no-preference){.wa-float::after{animation:waPulse 10s ease-out 4s infinite}}
+@keyframes waPulse{0%{transform:scale(1);opacity:.7}9%{transform:scale(1.75);opacity:0}100%{transform:scale(1.75);opacity:0}}
+body[data-view="checkout"] .wa-float{display:none}
 
 /* ---------- image zoom viewer ---------- */
 .lb{position:fixed;inset:0;z-index:90;background:var(--bg);display:grid;
@@ -642,7 +659,8 @@ body.modal-open{overflow:hidden}
 .size[disabled]:hover{border-color:var(--line)}
 .spec{font-size:13px;color:var(--muted);margin:0}
 .spec b{color:var(--text);font-weight:600}
-@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+/* Asked for less motion: nothing slides, zooms or drifts, but colours and plain fades remain. */
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition-property:opacity,color,background-color,border-color,visibility!important;scroll-behavior:auto!important}}
 
 /* ---------- checkout ---------- */
 .co-title{font-size:clamp(28px,4.6vw,44px);font-weight:400;margin:6px 0 26px}
@@ -777,7 +795,7 @@ footer li a{display:inline-block;padding:4px 0}
    paper, and its buttons and tick mark are not. */
 .print-only{display:none}
 @media print{
-  .topbar,.site-header,footer,.ok-actions,.ok-mark{display:none !important}
+  .topbar,.site-header,footer,.ok-actions,.ok-mark,.wa-float{display:none !important}
   .print-only{display:block;font-size:12px;letter-spacing:.02em;margin:0 0 18px}
   :root{--bg:#fff;--surface:#fff;--text:#000;--muted:#444;--line:#999;--line-strong:#999}
   body{background:#fff;color:#000}
@@ -1340,9 +1358,9 @@ footer li a{display:inline-block;padding:4px 0}
 
 <footer>
   <div class="wrap">
+    <a class="foot-mark" href="#top" aria-label="City Garments, back to the top">City Garments</a>
     <div>
-      <a class="brandmark" href="#top" style="color:var(--text)">City Garments</a>
-      <p style="margin:12px 0 0;max-width:38ch;font-size:13.5px;opacity:.82">Export-surplus menswear, Lahore.</p>
+      <p style="margin:0;max-width:38ch;font-size:13.5px;opacity:.82">Export-surplus menswear, Lahore.</p>
     </div>
     <div>
       <h4>Shop</h4>
@@ -1383,6 +1401,12 @@ footer li a{display:inline-block;padding:4px 0}
   </div>
 </footer>
 
+<!-- One tap to the shop's WhatsApp from anywhere except the checkout, where the order button
+     must not be covered. It is green because WhatsApp is: the one colour exception on the site. -->
+<a class="wa-float" href="https://wa.me/923204130348" target="_blank" rel="noopener" aria-label="Chat with City Garments on WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.4l1.4-4.3a8.5 8.5 0 1 1 15.6-4.5z"></path><path d="M9.2 8.3c-.5 1.2.2 2.9 1.6 4.3 1.400 1.400 3.100 2.100 4.300 1.600l.8-1.500-1.800-1-.9.800c-.7-.300-1.500-1.100-1.800-1.800l.8-.9-1-1.800z"></path></svg>
+</a>
+
 <div class="lb" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Product photo">
   <div class="lb-top">
     <span class="lb-name" id="lbName"></span>
@@ -1410,7 +1434,7 @@ footer li a{display:inline-block;padding:4px 0}
     <div class="row"><span>Delivery (Lahore)</span><span class="price">Rs. 300</span></div>
     <div class="row total"><span>Total</span><span class="price" id="sumTotal">Rs. 0</span></div>
     <a class="btn full" href="#checkout" id="goCheckout" style="text-align:center;text-decoration:none">Checkout</a>
-    <p class="cart-note">Cash on delivery, bank transfer or JazzCash / Easypaisa. Delivery outside Lahore is confirmed at checkout.</p>
+    <p class="cart-note"><b>Cash on delivery available.</b> Delivery outside Lahore is confirmed at checkout.</p>
   </div>
 </aside>
 
@@ -1780,6 +1804,7 @@ function closeNav(){
 burger.addEventListener('click', openNav);
 document.querySelectorAll('[data-close-nav]').forEach(el => el.addEventListener('click', closeNav));
 navDrawer.addEventListener('keydown', e => trapTab(navDrawer, e));
+cartDrawer.addEventListener('keydown', e => trapTab(cartDrawer, e));
 
 /* ---------- cart drawer ---------- */
 let lastFocus = null;
@@ -2263,6 +2288,12 @@ function setView(v){
   pdpView.hidden = v !== 'pdp';
   coView.hidden = v !== 'checkout';
   okView.hidden = v !== 'ordered';
+  document.body.dataset.view = v;
+  if (changed){
+    /* the page that has just been shown fades in */
+    const box = {home: shopView, cat: catView, pdp: pdpView, checkout: coView, ordered: okView}[v];
+    if (box){ box.classList.remove('view-in'); void box.offsetWidth; box.classList.add('view-in'); }
+  }
   return changed;
 }
 
@@ -2407,6 +2438,17 @@ function showHome(anchor){
 
   show(0);
   start();
+})();
+
+/* ---------- pictures fade in as they arrive ---------- */
+(function(){
+  const mark = img => { if (img.tagName === 'IMG' && img.loading === 'lazy') img.classList.add('is-in'); };
+  document.documentElement.classList.add('js-img');
+  /* load does not bubble, so it is caught on the way down; this also covers pictures added later.
+     A picture that fails to load is shown too, so its alt text is not left invisible. */
+  document.addEventListener('load', e => mark(e.target), true);
+  document.addEventListener('error', e => mark(e.target), true);
+  document.querySelectorAll('img[loading="lazy"]').forEach(img => { if (img.complete) mark(img); });
 })();
 
 /* ---------- scroll reveals ---------- */
