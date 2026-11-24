@@ -762,10 +762,11 @@ footer li a{display:inline-block;padding:4px 0}
         <button class="rail-nav prev" type="button" data-rail="railLeather" data-dir="-1" aria-label="Previous products" hidden>&#8249;</button>
         <button class="rail-nav next" type="button" data-rail="railLeather" data-dir="1" aria-label="More products" hidden>&#8250;</button>
       </div>
-      <a class="viewall" href="#c-leather">View all 28</a>
+      <a class="viewall" href="#c-leather">View all 44</a>
       <!-- Written for the buyer who has just read the price: what the money buys, in
-           claims the shop can stand behind. The saving quoted is the real one: these
-           jackets were listed at Rs. 20,000 before the Blessed Friday Sale. -->
+           claims the shop can stand behind. The saving quoted is the owner's: he priced
+           this lot at Rs. 20,000 a piece before the Blessed Friday Sale, and set the same
+           two figures for the pieces added on 24 Nov 2026. -->
       <p class="sec-note">Men's genuine leather jackets in Lahore, delivered across Pakistan. Every jacket here is
         real leather, lab tested &mdash; not PU and not rexine &mdash; in biker, bomber, cafe racer, trucker and hooded cuts.
         There is one piece of each design, and real leather is bought once and worn for years. In the
@@ -1206,6 +1207,24 @@ const ASK = 'on call';
 /* Said by the owner about this lot. It rides on every leather product page. */
 const LEATHER_NOTE = '100% genuine leather, lab tested. One piece only.';
 const PRODUCTS = [
+  /* Second leather lot, added 24 Nov 2026 and listed first so the newest pieces lead the rail. */
+  {code:'CG-L44', cat:'leather', name:'Leather Aviator Jacket', colour:'Navy', price:17500, was:20000, sizes:[ASK], img:'img/CG-L44-a.webp', alt:'img/CG-L44-b.webp', note:'Cream pile collar, rib cuffs and hem, patches on chest and sleeve, lettering across the back.'},
+  {code:'CG-L30', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L30-a.webp', alt:'img/CG-L30-b.webp', note:'Lapel collar with snaps, asymmetric zip, shoulder tabs, zip cuffs.'},
+  {code:'CG-L38', cat:'leather', name:'Leather Trucker Jacket', colour:'Cognac', price:17500, was:20000, sizes:[ASK], img:'img/CG-L38-a.webp', alt:'img/CG-L38-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
+  {code:'CG-L33', cat:'leather', name:'Distressed Leather Jacket', colour:'Stone', price:17500, was:20000, sizes:[ASK], img:'img/CG-L33-a.webp', alt:'img/CG-L33-b.webp', note:'Shirt collar, shoulder tabs, two slanted strap pockets, zip cuffs.'},
+  {code:'CG-L35', cat:'leather', name:'Quilted-Shoulder Leather Jacket', colour:'Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L35-a.webp', alt:'img/CG-L35-b.webp', note:'Stand collar with snap tab, quilted shoulders, two slanted chest zip pockets, zip cuffs.'},
+  {code:'CG-L31', cat:'leather', name:'Fur-Collar Leather Bomber Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L31-a.webp', alt:'img/CG-L31-b.webp', note:'Brown pile collar, two flap pockets, rib cuffs and hem.'},
+  {code:'CG-L45', cat:'leather', name:'Leather Cafe Racer Jacket', colour:'Camel', price:17500, was:20000, sizes:[ASK], img:'img/CG-L45-a.webp', alt:'img/CG-L45-b.webp', note:'Stand collar with snap tab, two chest zip pockets, zip cuffs.'},
+  {code:'CG-L43', cat:'leather', name:'Distressed Leather Racer Jacket', colour:'Charcoal', price:17500, was:20000, sizes:[ASK], img:'img/CG-L43-a.webp', alt:'img/CG-L43-b.webp', note:'Stand collar with snap tab, patches on chest and sleeve, zip cuffs.'},
+  {code:'CG-L40', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L40-a.webp', alt:'img/CG-L40-b.webp', note:'Lapel collar with snaps, asymmetric zip, shoulder tabs, flap pocket, zip cuffs.'},
+  {code:'CG-L37', cat:'leather', name:'Bomber Jacket', colour:'Sand', price:17500, was:20000, sizes:[ASK], img:'img/CG-L37-a.webp', alt:'img/CG-L37-b.webp', note:'Rib collar, cuffs and hem, two side zip pockets.'},
+  {code:'CG-L34', cat:'leather', name:'Leather Racer Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L34-a.webp', alt:'img/CG-L34-b.webp', note:'Stand collar, two side zip pockets, snap cuffs.'},
+  {code:'CG-L41', cat:'leather', name:'Quilted Leather Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L41-a.webp', alt:'img/CG-L41-b.webp', note:'Stand collar with snap tab, chevron quilting all over, full zip.'},
+  {code:'CG-L32', cat:'leather', name:'Leather Bomber Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L32-a.webp', alt:'img/CG-L32-b.webp', note:'Shirt collar, two flap pockets, rib cuffs and hem.'},
+  {code:'CG-L39', cat:'leather', name:'Hooded Leather Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L39-a.webp', alt:'img/CG-L39-b.webp', note:'Grey jersey hood, two side zip pockets, full zip.'},
+  {code:'CG-L36', cat:'leather', name:'Leather Racer Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L36-a.webp', alt:'img/CG-L36-b.webp', note:'Stand collar with snap tab, ribbed side panels, two side zip pockets.'},
+  {code:'CG-L42', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L42-a.webp', alt:'img/CG-L42-b.webp', note:'Lapel collar, asymmetric zip, shoulder tabs, buckle tabs at the hem, zip cuffs.'},
+
   {code:'CG-L01', cat:'leather', name:'Leather Trucker Jacket', colour:'Tan', price:17500, was:20000, sizes:[ASK], img:'img/CG-L01-a.webp', alt:'img/CG-L01-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
   {code:'CG-L02', cat:'leather', name:'Tie-Dye Leather Varsity Jacket', colour:'Grey', price:17500, was:20000, sizes:[ASK], img:'img/CG-L02-a.webp', alt:'img/CG-L02-b.webp', note:'Striped rib collar, cuffs and hem, snap front.'},
   {code:'CG-L03', cat:'leather', name:'Leather Trucker Jacket', colour:'Olive', price:17500, was:20000, sizes:[ASK], img:'img/CG-L03-a.webp', alt:'img/CG-L03-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
