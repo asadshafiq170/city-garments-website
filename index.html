@@ -281,6 +281,46 @@ section{scroll-margin-top:80px}
   text-transform:uppercase;color:var(--accent);border-bottom:1px solid rgba(224,162,58,.55);padding-bottom:2px}
 .tile:hover .link-arrow{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
 
+/* ---------- shop the mood ---------- */
+.moods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+@media (min-width:860px){.moods{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}}
+.mood{position:relative;display:block;overflow:hidden;border-radius:var(--radius);background:var(--surface);
+  text-decoration:none;aspect-ratio:3/4;line-height:0}
+.mood-img{position:absolute;inset:0;display:block;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+/* The picture is held 14% larger than its frame: that margin is what it drifts through. */
+.mood-img img{width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform}
+.mood-copy{position:absolute;left:0;right:0;bottom:0;display:block;padding:14px 14px 16px;color:var(--text);line-height:1.4;
+  background:linear-gradient(to top,rgba(17,20,28,.9),rgba(17,20,28,.12) 78%,transparent)}
+.mood-copy b{display:block;font-family:var(--font-serif);font-weight:400;font-size:clamp(26px,3.6vw,44px);
+  line-height:1.05;letter-spacing:-.01em;margin:3px 0 9px}
+.mood .link-arrow i{display:inline-block;font-style:normal;margin-left:3px}
+@media (min-width:860px){.mood-copy{padding:20px 20px 22px}}
+@media (hover:hover) and (pointer:fine){
+  .mood:hover .mood-img{transform:scale(1.06)}
+  .mood .link-arrow i{opacity:0;transform:translateX(-9px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+  .mood:hover .link-arrow i,.mood:focus-visible .link-arrow i{opacity:1;transform:none}
+  .mood:hover .link-arrow{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
+}
+@media (prefers-reduced-motion: reduce){.mood-img img{transform:none}}
+
+/* ---------- shop the look ---------- */
+/* A dot on the photograph marks the piece the model is wearing; pressing it opens quick view. */
+.look-dot{position:absolute;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;display:grid;place-items:center;z-index:2}
+.look-dot span{width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(224,162,58,.32)}
+.look-dot::before{content:"";position:absolute;inset:8px;border-radius:50%;border:1.5px solid var(--accent);opacity:0}
+.look-dot:hover span{background:var(--accent-hover)}
+@media (prefers-reduced-motion: no-preference){.look-dot::before{animation:lookPulse 2.8s ease-out infinite}}
+@keyframes lookPulse{0%{transform:scale(.55);opacity:.9}70%,100%{transform:scale(1.55);opacity:0}}
+
+/* ---------- scroll reveals ---------- */
+/* Sections rise into place the first time they are scrolled to, and never again. The hidden
+   starting state exists only once the script has switched it on, so nothing can stay invisible. */
+@media (prefers-reduced-motion: no-preference){
+  .reveal-on [data-reveal]{opacity:0;transform:translateY(24px)}
+  .reveal-on [data-reveal].in{opacity:1;transform:none;
+    transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--ri,0) * 90ms)}
+}
+
 /* ---------- category rails ---------- */
 .rail-wrap{position:relative}
 .rail{display:grid;gap:9px;grid-auto-flow:column;grid-auto-columns:76%;
@@ -819,23 +859,30 @@ footer li a{display:inline-block;padding:4px 0}
 
   <section class="band">
     <div class="wrap">
-      <div class="bento">
-        <a class="tile tile-lg" href="#c-jackets">
-          <img src="img/ed-jackets.webp" alt="Black and maroon reversible puffer jacket, shown open" width="1200" height="900" loading="lazy">
-          <span class="tile-copy">
-            <span class="eyebrow light">Outerwear</span>
-            <b>Two coats in one</b>
-            <span class="tile-sub">Reversible puffers · M to XXL</span>
-            <span class="link-arrow">Shop jackets</span>
-          </span>
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">Four rails</span>
+          <h2>Shop the Mood</h2>
+        </div>
+      </div>
+      <!-- Four doors into the shop. Each picture sits in a frame a little smaller than itself, so
+           it can drift as the page scrolls and ease closer under the pointer without showing an edge. -->
+      <div class="moods">
+        <a class="mood" href="#c-leather">
+          <span class="mood-img" data-parallax><img src="img/CG-L38-a.webp" alt="Cognac leather trucker jacket" width="800" height="1000" loading="lazy"></span>
+          <span class="mood-copy"><span class="eyebrow light">Genuine leather</span><b>Leather</b><span class="link-arrow">Shop leather <i aria-hidden="true">&rarr;</i></span></span>
         </a>
-        <a class="tile" href="#c-shackets">
-          <img src="img/ed-shackets.webp" alt="Model wearing the blue herringbone shacket" width="1200" height="900" loading="lazy">
-          <span class="tile-copy"><b>Shackets</b><span class="tile-sub">Five colours · M to XXL</span></span>
+        <a class="mood" href="#c-jackets">
+          <span class="mood-img" data-parallax><img src="img/ed-jackets.webp" alt="Black and maroon reversible puffer jacket, shown open" width="1200" height="900" loading="lazy"></span>
+          <span class="mood-copy"><span class="eyebrow light">Two coats in one</span><b>Puffers</b><span class="link-arrow">Shop puffers <i aria-hidden="true">&rarr;</i></span></span>
         </a>
-        <a class="tile" href="#c-footwear">
-          <img src="img/cat-footwear.webp" alt="Black suede chelsea boots" width="1200" height="900" loading="lazy">
-          <span class="tile-copy"><b>Footwear</b><span class="tile-sub">Sneakers, loafers and boots</span></span>
+        <a class="mood" href="#c-shackets">
+          <span class="mood-img" data-parallax><img src="img/ed-shackets.webp" alt="Model wearing the blue herringbone shacket" width="1200" height="900" loading="lazy"></span>
+          <span class="mood-copy"><span class="eyebrow light">Five colours</span><b>Shackets</b><span class="link-arrow">Shop shackets <i aria-hidden="true">&rarr;</i></span></span>
+        </a>
+        <a class="mood" href="#c-footwear">
+          <span class="mood-img" data-parallax><img src="img/cat-footwear.webp" alt="Black suede chelsea boots" width="1200" height="900" loading="lazy"></span>
+          <span class="mood-copy"><span class="eyebrow light">Sneakers, loafers, boots</span><b>Footwear</b><span class="link-arrow">Shop footwear <i aria-hidden="true">&rarr;</i></span></span>
         </a>
       </div>
     </div>
@@ -919,6 +966,25 @@ footer li a{display:inline-block;padding:4px 0}
         <button class="rail-nav next" type="button" data-rail="railFootwear" data-dir="1" aria-label="More products" hidden>&#8250;</button>
       </div>
       <a class="viewall" href="#c-footwear">View all 8</a>
+    </div>
+  </section>
+
+  <!-- The shop's own model photographs, one per shacket. The row is filled by renderLooks()
+       from the product list, so a piece that sells out leaves the row by itself. -->
+  <section class="band tint" id="looks">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <span class="eyebrow">On the model</span>
+          <h2>Shop the Look</h2>
+          <p>Tap the dot on a look to open the piece.</p>
+        </div>
+      </div>
+      <div class="rail-wrap">
+        <div class="rail" id="railLooks" style="--cols:4"></div>
+        <button class="rail-nav prev" type="button" data-rail="railLooks" data-dir="-1" aria-label="Previous looks" hidden>&#8249;</button>
+        <button class="rail-nav next" type="button" data-rail="railLooks" data-dir="1" aria-label="More looks" hidden>&#8250;</button>
+      </div>
     </div>
   </section>
 
@@ -1522,6 +1588,25 @@ function renderRails(){
   fill('railJackets', 'jackets', 3);
   fill('railShackets', 'shackets', 6);
   fill('railFootwear', 'footwear', 8);
+  renderLooks();
+}
+
+/* Shop the look: every shacket that has a model photograph and can still be bought. */
+function renderLooks(){
+  const el = document.getElementById('railLooks');
+  if (!el) return;
+  const list = PRODUCTS.filter(p => p.cat === 'shackets' && p.alt && !allGone(p));
+  el.closest('section').hidden = !list.length;
+  el.innerHTML = list.map(p =>
+    '<article class="card look"><div class="card-media">' +
+      '<img src="' + p.alt + '" alt="Model wearing the ' + esc(p.name) + ' in ' + esc(p.colour) + '" loading="lazy" width="800" height="1000">' +
+      '<button class="look-dot" style="left:45%;top:26%" data-open="' + p.code + '" aria-label="Shop the ' + esc(p.name) + ' in ' + esc(p.colour) + '"><span></span></button>' +
+    '</div><div class="card-body">' +
+      '<a class="card-title-link" href="#p-' + p.code + '"><h3>' + p.name + '</h3></a>' +
+      '<span class="card-price price">' + priceHtml(p) + '</span>' +
+      '<span class="card-meta">' + p.code + ' · ' + p.colour + '</span>' +
+    '</div></article>').join('');
+  el.classList.toggle('peek', list.length > 4);
 }
 
 document.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
@@ -2218,6 +2303,52 @@ function showHome(anchor){
 
   show(0);
   start();
+})();
+
+/* ---------- scroll reveals ---------- */
+(function(){
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  /* [selector, whether siblings should follow one another] */
+  const groups = [['#shopView .sec-head', false], ['#shopView .moods > *', true], ['#shopView .rail-wrap', false],
+                  ['#shopView .trust li', true], ['#shopView .news > *', true], ['#shopView .contact > *', true]];
+  const els = [];
+  groups.forEach(([sel, stagger]) => document.querySelectorAll(sel).forEach(el => {
+    el.setAttribute('data-reveal', '');
+    if (stagger) el.style.setProperty('--ri', Math.min([...el.parentElement.children].indexOf(el), 6));
+    els.push(el);
+  }));
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);                    /* once only */
+  }), {rootMargin: '0px 0px -7% 0px', threshold: 0.06});
+  document.documentElement.classList.add('reveal-on');
+  els.forEach(el => io.observe(el));
+})();
+
+/* ---------- parallax on the mood pictures ---------- */
+(function(){
+  const frames = [...document.querySelectorAll('[data-parallax]')];
+  if (!frames.length || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const near = new Set();
+  const io = new IntersectionObserver(entries => entries.forEach(e => { e.isIntersecting ? near.add(e.target) : near.delete(e.target); }),
+    {rootMargin: '12% 0px'});
+  frames.forEach(f => io.observe(f));
+  let queued = false;
+  /* Each picture drifts up to about 4% against the scroll: -1 when its frame is a screen
+     below the middle, +1 a screen above. Only transform is touched, once per frame. */
+  function draw(){
+    queued = false;
+    const vh = window.innerHeight;
+    near.forEach(f => {
+      const r = f.getBoundingClientRect();
+      const p = Math.max(-1, Math.min(1, ((r.top + r.height / 2) - vh / 2) / vh));
+      f.firstElementChild.style.transform = 'translate3d(0,' + (p * -5.5).toFixed(2) + '%,0) scale(1.14)';
+    });
+  }
+  addEventListener('scroll', () => { if (!queued){ queued = true; requestAnimationFrame(draw); } }, {passive:true});
+  addEventListener('resize', draw);
+  setTimeout(draw, 60);
 })();
 
 /* ---------- rail arrows ---------- */
