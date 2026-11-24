@@ -64,7 +64,7 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
 img{display:block;max-width:100%;height:auto}
 a{color:inherit}
@@ -413,6 +413,42 @@ section{scroll-margin-top:80px}
 .card-price{font-family:var(--font-display);font-weight:600;font-size:13px;margin-top:1px}
 .card-media a.shot{display:block}
 .empty{grid-column:1/-1;padding:46px 0;text-align:center;color:var(--muted)}
+
+/* ---------- listing page: a catalogue wall ---------- */
+.cat{padding-bottom:46px}
+.cat-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px max(16px,env(safe-area-inset-right,0px)) 2px max(16px,env(safe-area-inset-left,0px))}
+.cat .breadcrumb{margin:0;gap:6px;flex-wrap:nowrap;min-width:0;font-family:var(--font-display);font-size:11px;letter-spacing:.09em;text-transform:uppercase}
+.cat .breadcrumb h1{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-tools{display:flex;align-items:center;gap:12px;flex:none}
+#countLine{margin:0;font-size:11px;letter-spacing:.03em;color:var(--muted);white-space:nowrap}
+.viewsw{display:flex}
+.viewsw button{width:30px;height:30px;display:grid;place-items:center;color:var(--muted);border-radius:6px}
+.viewsw button[aria-pressed="true"]{color:var(--text)}
+.viewsw button:hover{color:var(--accent)}
+.viewsw svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.4}
+/* a phone chooses between one and two a row; a wider screen between two, three and four */
+.viewsw [data-cols="3"],.viewsw [data-cols="4"]{display:none}
+@media (min-width:760px){.viewsw [data-cols="1"]{display:none}.viewsw [data-cols="3"],.viewsw [data-cols="4"]{display:grid}}
+/* the filters become plain text tabs with a rule under the one that is on */
+.cat .filters{flex-wrap:nowrap;gap:22px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin:0;
+  padding:8px max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px))}
+.cat .filters::-webkit-scrollbar{display:none}
+.cat .chip{flex:none;border:0;border-bottom:1.5px solid transparent;border-radius:0;background:none;padding:6px 0;
+  font-size:11.5px;letter-spacing:.1em;color:var(--muted);-webkit-backdrop-filter:none;backdrop-filter:none}
+.cat .chip:hover{color:var(--accent)}
+.cat .chip[aria-pressed="true"]{background:none;color:var(--text);border-bottom-color:var(--text)}
+/* the grid runs from edge to edge with hairline gaps, square corners, text tucked under */
+.cat .grid{grid-template-columns:repeat(var(--cols-m,2),minmax(0,1fr));gap:20px 3px}
+@media (min-width:760px){.cat .grid{grid-template-columns:repeat(var(--cols-d,4),minmax(0,1fr));gap:26px 3px}}
+.cat .card-media,.cat .card-media .quickadd{border-radius:0}
+.cat .card-body{padding:9px 10px 0}
+.cat .badge{top:8px;left:8px}
+.cat .empty{padding-inline:16px}
+/* on a touch screen the quick-view button is a full-width bar under the picture */
+@media (hover:none){.cat .quick{display:block;width:100%;margin:0;border:0;border-top:1px solid var(--line);border-radius:0;padding:10px 6px}}
+@media (max-width:559px){#countLine{display:none}}
 
 /* ---------- newsletter ---------- */
 .news{display:grid;gap:22px;align-items:center}
@@ -1050,27 +1086,32 @@ footer li a{display:inline-block;padding:4px 0}
   </section>
 </div>
 
+<!-- The listing page is a catalogue wall: one slim bar (where you are, how many, how dense),
+     a row of text tabs, then the grid from edge to edge. The eyebrow, crumb and intro are still
+     filled by showCat() but are not shown; the page title is the last crumb. -->
 <div id="catView" hidden>
-  <section class="band">
-    <div class="wrap">
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#top">Home</a><span>/</span><span id="catCrumb"></span></nav>
-      <div class="sec-head">
-        <div>
-          <span class="eyebrow" id="catEyebrow"></span>
-          <h1 id="catTitle"></h1>
-          <p id="countLine"></p>
-          <p id="catIntro" hidden></p>
+  <section class="cat">
+    <div class="cat-bar">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#top">Home</a><span>/</span><h1 id="catTitle"></h1></nav>
+      <div class="cat-tools">
+        <p id="countLine"></p>
+        <div class="viewsw" id="viewSw" role="group" aria-label="Cards per row">
+          <button type="button" data-cols="1" aria-pressed="false" aria-label="One per row"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="10" height="12"></rect></svg></button>
+          <button type="button" data-cols="2" aria-pressed="false" aria-label="Two per row"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="12"></rect><rect x="9" y="2" width="5" height="12"></rect></svg></button>
+          <button type="button" data-cols="3" aria-pressed="false" aria-label="Three per row"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2" width="3.4" height="12"></rect><rect x="6.3" y="2" width="3.4" height="12"></rect><rect x="11.1" y="2" width="3.4" height="12"></rect></svg></button>
+          <button type="button" data-cols="4" aria-pressed="false" aria-label="Four per row"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5"></rect><rect x="9" y="2" width="5" height="5"></rect><rect x="2" y="9" width="5" height="5"></rect><rect x="9" y="9" width="5" height="5"></rect></svg></button>
         </div>
       </div>
-      <div class="filters" role="group" aria-label="Filter products">
-        <button class="chip" data-filter="all" aria-pressed="true">All</button>
-        <button class="chip" data-filter="leather" aria-pressed="false">Leather</button>
-        <button class="chip" data-filter="jackets" aria-pressed="false">Jackets</button>
-        <button class="chip" data-filter="shackets" aria-pressed="false">Shackets</button>
-        <button class="chip" data-filter="footwear" aria-pressed="false">Footwear</button>
-      </div>
-      <div class="grid" id="grid"></div>
     </div>
+    <span id="catCrumb" hidden></span><span id="catEyebrow" hidden></span><p id="catIntro" hidden style="display:none"></p>
+    <div class="filters" role="group" aria-label="Filter products">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="leather" aria-pressed="false">Leather</button>
+      <button class="chip" data-filter="jackets" aria-pressed="false">Jackets</button>
+      <button class="chip" data-filter="shackets" aria-pressed="false">Shackets</button>
+      <button class="chip" data-filter="footwear" aria-pressed="false">Footwear</button>
+    </div>
+    <div class="grid" id="grid"></div>
   </section>
 </div>
 
@@ -1617,6 +1658,36 @@ document.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', 
   if (location.hash === target) showCat(btn.dataset.filter);
   else location.hash = target;
 }));
+
+/* ---------- cards per row on the listing page ----------
+   A phone picks one or two a row, a wider screen two, three or four. Each is remembered on
+   its own, so choosing big pictures on the phone does not change the laptop. */
+(function(){
+  const sw = document.getElementById('viewSw'), box = document.getElementById('grid');
+  if (!sw || !box) return;
+  const wide = window.matchMedia('(min-width:760px)');
+  const read = (key, fallback, allowed) => {
+    let v = fallback;
+    try { v = +localStorage.getItem(key) || fallback; } catch (err) {}
+    return allowed.includes(v) ? v : fallback;
+  };
+  const keep = (key, v) => { try { localStorage.setItem(key, v); } catch (err) {} };
+  let onPhone = read('cg_cols_m', 2, [1, 2]), onWide = read('cg_cols_d', 4, [2, 3, 4]);
+  function apply(){
+    box.style.setProperty('--cols-m', onPhone);
+    box.style.setProperty('--cols-d', onWide);
+    const now = wide.matches ? onWide : onPhone;
+    sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.cols === now)));
+  }
+  sw.addEventListener('click', e => {
+    const b = e.target.closest('button[data-cols]'); if (!b) return;
+    const n = +b.dataset.cols;
+    if (wide.matches){ onWide = n; keep('cg_cols_d', n); } else { onPhone = n; keep('cg_cols_m', n); }
+    apply();
+  });
+  if (wide.addEventListener) wide.addEventListener('change', apply);
+  apply();
+})();
 
 /* ---------- search ---------- */
 const searchbar = document.getElementById('searchbar');
