@@ -254,6 +254,9 @@ body.nav-open{overflow:hidden}
 
 /* ---------- sections ---------- */
 section{scroll-margin-top:80px}
+/* "#top" means the very top of the page: without this the browser stops at <main>, which
+   starts under the header and the sale ticker, and the ticker is scrolled out of sight. */
+main#top{scroll-margin-top:240px}
 .band{padding-block:46px}
 @media (min-width:760px){.band{padding-block:72px}}
 .band.tint{background:var(--surface)}
@@ -669,8 +672,8 @@ body.modal-open{overflow:hidden}
 .co-title{font-size:clamp(28px,4.6vw,44px);font-weight:400;margin:6px 0 26px}
 .co-grid{display:grid;gap:26px;align-items:start}
 @media (min-width:900px){.co-grid{grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr);gap:40px}}
-.co-block{border:0;border-top:1px solid var(--line);margin:0;padding:20px 0 4px;display:grid;gap:14px}
-.co-block.first{border-top:0;padding-top:0}
+.co-block{border:0;border-top:1px solid var(--line);margin:0;padding:20px 0 14px;display:grid;gap:14px}
+.co-block.first{border-top:0;padding-top:14px}
 .co-block legend{font-family:var(--font-display);font-size:11.5px;font-weight:700;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);padding:0}
 .opt{font-weight:400;letter-spacing:.04em;text-transform:none;color:var(--muted)}
@@ -1255,7 +1258,7 @@ footer li a{display:inline-block;padding:4px 0}
   </section>
   <section class="band tint">
     <div class="wrap">
-      <div class="sec-head"><div><span class="eyebrow">More from this rail</span><h2>You may also like</h2></div></div>
+      <div class="sec-head"><div><span class="eyebrow">More like this</span><h2>You may also like</h2></div></div>
       <div class="grid" id="pdpRelated"></div>
     </div>
   </section>
@@ -1803,6 +1806,18 @@ document.getElementById('searchToggle').addEventListener('click', e => {
   e.currentTarget.setAttribute('aria-expanded', String(open));
   if (open) searchInput.focus();
 });
+function closeSearch(){
+  if (searchbar.hidden) return;
+  searchbar.hidden = true;
+  document.getElementById('searchToggle').setAttribute('aria-expanded', 'false');
+  query = ''; searchInput.value = '';
+}
+searchInput.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  closeSearch();
+  if (location.hash === '#c-all') showCat('all');
+  document.getElementById('searchToggle').focus();
+});
 searchInput.addEventListener('input', () => {
   query = searchInput.value;
   if (location.hash === '#c-all') showCat('all');
@@ -2330,6 +2345,9 @@ function setView(v){
   coView.hidden = v !== 'checkout';
   okView.hidden = v !== 'ordered';
   document.body.dataset.view = v;
+  /* the search box belongs to the listing: leaving it open over a product, the checkout
+     or the thank-you page looks like a stray field */
+  if (v !== 'cat' && v !== 'home') closeSearch();
   if (changed){
     /* the page that has just been shown fades in */
     const box = {home: shopView, cat: catView, pdp: pdpView, checkout: coView, ordered: okView}[v];
