@@ -1504,6 +1504,8 @@ const ASK = 'on call';
 const LEATHER_NOTE = '100% genuine leather, lab tested. One piece only.';
 const PRODUCTS = [
   /* Second leather lot, added 24 Nov 2026 and listed first so the newest pieces lead the rail. */
+  {code:'CG-L46', cat:'leather', name:'Leather Racing Jacket', colour:'Dark Green', price:17500, was:20000, sizes:[ASK], img:'img/CG-L46-a.webp', alt:'img/CG-L46-b.webp', note:'Stand collar with snap tab, blue and cream shoulder stripes, patches on chest and sleeve, two chest zip pockets, buckle tabs at the hem.'},
+  {code:'CG-L47', cat:'leather', name:'Leather Bomber Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L47-a.webp', alt:'img/CG-L47-b.webp', note:'Stand collar, two side zip pockets, rib cuffs and hem.'},
   {code:'CG-L44', cat:'leather', name:'Leather Aviator Jacket', colour:'Navy', price:17500, was:20000, sizes:[ASK], img:'img/CG-L44-a.webp', alt:'img/CG-L44-b.webp', note:'Cream pile collar, rib cuffs and hem, patches on chest and sleeve, lettering across the back.'},
   {code:'CG-L30', cat:'leather', name:'Leather Biker Jacket', colour:'Black', price:17500, was:20000, sizes:[ASK], img:'img/CG-L30-a.webp', alt:'img/CG-L30-b.webp', note:'Lapel collar with snaps, asymmetric zip, shoulder tabs, zip cuffs.'},
   {code:'CG-L38', cat:'leather', name:'Leather Trucker Jacket', colour:'Cognac', price:17500, was:20000, sizes:[ASK], img:'img/CG-L38-a.webp', alt:'img/CG-L38-b.webp', note:'Shirt collar, two flap chest pockets, button front.'},
@@ -1665,7 +1667,7 @@ const SWATCH = {
   'Navy':'#1f2b45', 'Teal':'#1f5e52', 'Light Grey':'#b4b8bd', 'Cream':'#e6dcc8', 'White':'#f1f1f1',
   'Taupe':'#b3a693', 'Sand':'#cbbba6', 'Brown':'#7b5a42',
   'Tan':'#b9814f', 'Dark Brown':'#4a3428', 'Beige':'#d8bf95', 'Cognac':'#b56a35',
-  'Stone':'#7a6d5a', 'Charcoal':'#4d4c4c', 'Camel':'#996c47'
+  'Stone':'#7a6d5a', 'Charcoal':'#4d4c4c', 'Camel':'#996c47', 'Dark Green':'#24402f'
 };
 const swatchesOf = p => p.colour.split('/').map(s => s.trim()).map(n => SWATCH[n] || '#9aa0a6');
 

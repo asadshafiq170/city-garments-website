@@ -4,3 +4,4 @@ desktop.ini
 .DS_Store
 site/
 .claude/
+.playwright-mcp/
