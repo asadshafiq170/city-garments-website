@@ -249,8 +249,8 @@ body.nav-open{overflow:hidden}
 .btn.full{width:100%;text-align:center}
 .btn[disabled],.btn[disabled]:hover{background:var(--surface);border-color:var(--line-strong);color:var(--muted);cursor:not-allowed}
 /* WhatsApp keeps its own green: an outline, so it never outshouts the amber button beside it */
-.btn.ghost[href*="wa.me"],#pdpWa,#okWa{background:var(--wa);color:var(--night);border-color:var(--wa)}
-.btn.ghost[href*="wa.me"]:hover,#pdpWa:hover,#okWa:hover{background:#1FBF5B;color:var(--night);border-color:#1FBF5B}
+.btn.ghost[href*="wa.me"],#okWa{background:var(--wa);color:var(--night);border-color:var(--wa)}
+.btn.ghost[href*="wa.me"]:hover,#okWa:hover{background:#1FBF5B;color:var(--night);border-color:#1FBF5B}
 
 /* ---------- sections ---------- */
 section{scroll-margin-top:80px}
@@ -417,6 +417,12 @@ main#top{scroll-margin-top:240px}
 .qa[disabled]{opacity:.35;text-decoration:line-through;cursor:not-allowed}
 .qa[disabled]:hover{background:transparent;color:inherit;border-color:var(--line)}
 .swatches{display:flex;gap:4px;margin-top:5px}
+/* the one control on a card's picture: a plus that opens the quick view */
+.plus{position:absolute;right:8px;bottom:8px;width:30px;height:30px;display:grid;place-items:center;
+  background:var(--bg);color:var(--text);border:0;border-radius:2px;box-shadow:0 0 0 1px var(--line);
+  font-family:var(--font-body);font-size:19px;font-weight:300;line-height:1;cursor:pointer;transition:background .15s,color .15s}
+.plus:hover{background:var(--text);color:var(--bg)}
+@media (hover:none),(pointer:coarse){.plus::after{content:"";position:absolute;inset:-8px}}
 .dot{width:9px;height:9px;border-radius:50%;border:1px solid rgba(128,128,128,.4);display:block}
 .badge{position:absolute;top:10px;left:10px;border-radius:999px;background:var(--surface);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-strong);font-family:var(--font-display);
   font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px}
@@ -627,6 +633,9 @@ body.lb-open{overflow:hidden}
 .price .was{color:var(--muted);font-weight:400;font-size:.72em;margin-left:8px}
 .price .off{color:var(--text);font-weight:700;font-size:.62em;letter-spacing:.06em;text-transform:uppercase;margin-left:6px}
 .pdp-actions{display:grid;gap:8px}
+.pdp-wa{justify-self:start;background:none;border:0;padding:8px 0;font:inherit;font-size:12.5px;color:var(--muted);
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+.pdp-wa:hover{color:var(--text)}
 .qty-row{display:flex;align-items:center;gap:12px}
 .qty-row .qty{margin-top:0}
 .stock-note{font-size:12px;color:var(--text);margin:0}
@@ -1021,7 +1030,6 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Genuine leather</span>
           <h2>Leather Jackets</h2>
-          <p>Blessed Friday Sale · now on</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -1033,7 +1041,6 @@ footer li a{display:inline-block;padding:4px 0}
       <!-- What the money buys, in claims the shop can stand behind. No figure is printed here:
            the owner asked for prices to be kept off banners, headings and notes, so they appear
            as one quiet line on a card and in full on the product page. -->
-      <p class="sec-note">Real leather, lab tested &mdash; not PU, not rexine. One piece of each design.</p>
     </div>
   </section>
 
@@ -1043,7 +1050,6 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Outerwear</span>
           <h2>Jackets</h2>
-          <p>Reversible puffers · M to XXL</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -1061,7 +1067,6 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Layering</span>
           <h2>Shackets</h2>
-          <p>Wool-blend overshirts · M to XXL</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -1079,7 +1084,6 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <span class="eyebrow">Shoes</span>
           <h2>Footwear</h2>
-          <p>Sneakers, loafers and boots · one pair per size</p>
         </div>
       </div>
       <div class="rail-wrap">
@@ -1173,7 +1177,6 @@ footer li a{display:inline-block;padding:4px 0}
         <div>
           <h3>How ordering works</h3>
           <p>Send the code and your size on WhatsApp.</p>
-          <p style="margin-top:8px">Cash on delivery &middot; 7-day exchange.</p>
         </div>
       </div>
     </div>
@@ -1213,7 +1216,7 @@ footer li a{display:inline-block;padding:4px 0}
   <section class="band pdp">
     <div class="wrap">
       <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="#c-all">Shop</a><span>/</span><a href="#" id="pdpCrumbCat"></a><span>/</span><span id="pdpCrumbName"></span>
+        <a href="#top">Home</a><span>/</span><a href="#" id="pdpCrumbCat"></a>
       </nav>
       <div class="pdp-grid">
         <div class="gallery">
@@ -1230,27 +1233,25 @@ footer li a{display:inline-block;padding:4px 0}
           <div class="thumbs" id="pdpThumbs"></div>
         </div>
         <div class="pdp-info">
-          <span class="eyebrow" id="pdpCat"></span>
           <h1 id="pdpName"></h1>
           <p class="pdp-sub" id="pdpSub"></p>
           <p class="pdp-price price" id="pdpPrice"></p>
-          <div>
+          <div id="pdpSizeBox">
             <p class="eyebrow" style="margin:0 0 7px" id="pdpSizeLabel">Select size</p>
             <div class="sizes" id="pdpSizes"></div>
           </div>
           <p class="stock-note" id="pdpStock"></p>
-          <div class="qty-row">
+          <div class="qty-row" id="pdpQtyRow">
             <span class="eyebrow">Quantity</span>
             <span class="qty"><button id="pdpDec" aria-label="Decrease quantity">&minus;</button><span id="pdpQty">1</span><button id="pdpInc" aria-label="Increase quantity">+</button></span>
           </div>
           <div class="pdp-actions">
             <button class="btn full" id="pdpAdd" disabled>Select a size</button>
-            <button class="btn ghost full" id="pdpWa">Ask about this on WhatsApp</button>
+            <button class="pdp-wa" id="pdpWa">Ask about this piece on WhatsApp</button>
           </div>
           <div class="acc">
-            <details open><summary>Details</summary><p id="pdpDetails"></p></details>
-            <details><summary>Delivery &amp; payment</summary><p>Cash on delivery only, anywhere in Pakistan. Delivery is Rs. 300 inside Lahore and Rs. 350 everywhere else — one flat rate, whatever you order. We check the piece is still in stock before it leaves the shop.</p></details>
-            <details><summary>Exchange</summary><p>Exchange within 7 days of delivery. Return delivery is paid by the customer. WhatsApp 0320 4130348 with your order details to start one.</p></details>
+            <details open><summary>Details &amp; material</summary><p id="pdpDetails"></p></details>
+            <details><summary>Delivery &amp; exchange</summary><p>Cash on delivery only, anywhere in Pakistan. Delivery is Rs. 300 inside Lahore and Rs. 350 everywhere else — one flat rate, whatever you order. We check the piece is still in stock before it leaves the shop.</p><p>Exchange within 7 days of delivery. Return delivery is paid by the customer. WhatsApp 0320 4130348 with your order details to start one.</p></details>
           </div>
         </div>
       </div>
@@ -1479,17 +1480,16 @@ footer li a{display:inline-block;padding:4px 0}
     <button class="modal-close" id="modalClose" aria-label="Close">&#10005;</button>
     <img class="hero-img" id="mImg" alt="">
     <div class="modal-body">
-      <span class="eyebrow" id="mCat"></span>
       <h2 id="mName"></h2>
       <p class="spec" id="mColour"></p>
       <p class="card-price price" id="mPrice" style="font-size:19px"></p>
-      <div>
+      <div id="mSizeBox">
         <p class="eyebrow" style="margin:0 0 7px" id="mSizeLabel">Select size</p>
         <div class="sizes" id="mSizes"></div>
       </div>
       <p class="spec" id="mStock"></p>
       <button class="btn full" id="mAdd" disabled>Select a size</button>
-      <p class="spec">Code <b id="mCode"></b> · Cash on delivery · 7-day exchange</p>
+      <p class="spec">Code <b id="mCode"></b></p>
     </div>
   </div>
 </div>
@@ -1501,7 +1501,7 @@ footer li a{display:inline-block;padding:4px 0}
    it already makes. When a real size is known, replace [ASK] with it, e.g. ['L']. */
 const ASK = 'on call';
 /* Said by the owner about this lot. It rides on every leather product page. */
-const LEATHER_NOTE = '100% genuine leather, lab tested. One piece only.';
+const LEATHER_NOTE = '100% genuine leather, lab tested.';
 const PRODUCTS = [
   /* Second leather lot, added 24 Nov 2026 and listed first so the newest pieces lead the rail. */
   {code:'CG-L46', cat:'leather', name:'Leather Racing Jacket', colour:'Dark Green', price:17500, was:20000, sizes:[ASK], img:'img/CG-L46-a.webp', alt:'img/CG-L46-b.webp', note:'Stand collar with snap tab, blue and cream shoulder stripes, patches on chest and sleeve, two chest zip pockets, buckle tabs at the hem.'},
@@ -1591,9 +1591,7 @@ const offOf = p => p.was ? (1 - p.price / p.was) * 100 : 0;
    the two real prices, never typed in. */
 const wholeOff = p => Math.abs(offOf(p) - Math.round(offOf(p))) < 0.001;
 const saveLabel = p => wholeOff(p) ? Math.round(offOf(p)) + '% off' : 'Save ' + rs(p.was - p.price);
-const priceHtml = p => p.was
-  ? rs(p.price) + ' <s class="was">' + rs(p.was) + '</s> <span class="off">' + saveLabel(p) + '</span>'
-  : rs(p.price);
+const priceHtml = p => cardPrice(p);
 /* On a card the price is one quiet line, the way a catalogue prints it: what the piece costs,
    what it cost before, and the percentage only when that is a round number. The rupees saved
    are spelt out on the product page, not here. */
@@ -1622,7 +1620,7 @@ function stockLine(p){
   if (!live.length)
     return 'Sold out for now. Message us and we will tell you when it is back.';
   if (p.sizes[0] === ASK)
-    return 'One piece only. We call you to confirm the size before you pay.';
+    return 'One piece. We call you to confirm the size before you pay.';
   if (p.sizes.length === 1)
     return 'One pair only, size ' + p.sizes[0] + '. We confirm it is still here before you pay.';
   if (live.length < p.sizes.length)
@@ -1675,32 +1673,26 @@ function cardHtml(p){
   const one = p.sizes.length === 1;
   const gone = allGone(p);
   const ask = p.sizes[0] === ASK;
-  const badge = gone ? '<span class="badge gone">Sold out</span>'
-              : p.was ? '<span class="badge low">' + (wholeOff(p) ? Math.round(offOf(p)) + '% off' : 'Sale') + '</span>'
-              : p.badge ? '<span class="badge">' + p.badge + '</span>'
-              : one ? '<span class="badge low">' + (ask ? 'One piece' : 'Last pair') + '</span>' : '';
+  /* The picture carries one label at most: sold out. Sale and one-piece are said in the two
+     lines under the picture, once. */
+  const badge = gone ? '<span class="badge gone">Sold out</span>' : '';
   const alt = (CAN_HOVER && p.alt) ? '<img class="alt" src="' + p.alt + '" alt="" loading="lazy" width="800" height="1000">' : '';
   const meta = gone ? p.colour + ' · Sold out'
              : ask ? p.colour + ' · One piece'
              : one ? 'Size ' + p.sizes[0] + ' · ' + p.colour : p.colour + ' · M–XXL';
   const link = '#p-' + p.code;
   const dots = swatchesOf(p).map(c => '<span class="dot" style="background:' + c + '"></span>').join('');
-  const qa = p.sizes.map(s => isOut(p, s)
-    ? '<button class="qa" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
-    : '<button class="qa" data-add="' + p.code + '|' + s + '" aria-label="Add size ' + s + ' to bag">' + (s === ASK ? '1 piece' : s) + '</button>').join('');
   return '<article class="card">' +
     '<div class="card-media">' +
       '<a class="shot" href="' + link + '" aria-label="' + p.name + ', ' + p.colour + '">' +
         '<img src="' + p.img + '" alt="' + p.name + ' in ' + p.colour + '" loading="lazy" width="800" height="1000">' + alt +
       '</a>' + badge +
-      '<div class="quickadd"><span class="qa-label">Add</span><div class="qa-row">' + qa + '</div>' +
-        '<button class="qa qv" data-open="' + p.code + '" aria-label="Quick view of ' + p.name + '">Quick view</button></div>' +
-      '<button class="quick" data-open="' + p.code + '">Quick view</button>' +
+      '<button class="plus" data-open="' + p.code + '" aria-label="Quick view of ' + p.name + '">+</button>' +
     '</div>' +
     '<div class="card-body">' +
       '<a class="card-title-link" href="' + link + '"><h3>' + p.name + '</h3></a>' +
       '<span class="card-price price">' + cardPrice(p) + '</span>' +
-      '<span class="card-meta">' + p.code + ' · ' + meta + '</span>' +
+      '<span class="card-meta">' + meta + '</span>' +
       '<span class="swatches" aria-hidden="true">' + dots + '</span>' +
     '</div></article>';
 }
@@ -1722,7 +1714,7 @@ function renderGrid(){
 const CATS = {
   all:      {title:'All products', eyebrow:'The full rail'},
   leather:  {title:'Leather Jackets', eyebrow:'Genuine leather',
-             intro:'Blessed Friday Sale now on. 100% genuine leather, lab tested, one piece of each design.'},
+             intro:'Genuine leather. One piece of each design.'},
   jackets:  {title:'Jackets',      eyebrow:'Outerwear'},
   shackets: {title:'Shackets',     eyebrow:'Layering'},
   footwear: {title:'Footwear',     eyebrow:'Shoes'}
@@ -2159,13 +2151,13 @@ function openModal(code){
   chosenSize = mLive.length === 1 ? mLive[0] : null;
   document.getElementById('mImg').src = p.img;
   document.getElementById('mImg').alt = p.name + ' in ' + p.colour;
-  document.getElementById('mCat').textContent = p.cat;
   document.getElementById('mName').textContent = p.name;
   document.getElementById('mColour').textContent = p.colour + ' — ' + detailOf(p);
   document.getElementById('mPrice').innerHTML = priceHtml(p);
   document.getElementById('mCode').textContent = p.code;
   document.getElementById('mSizeLabel').textContent = mLive.length === 1 ? 'Size' : 'Select size';
   document.getElementById('mStock').textContent = stockLine(p);
+  document.getElementById('mSizeBox').hidden = p.sizes[0] === ASK;
   document.getElementById('mSizes').innerHTML = p.sizes.map(s => isOut(p, s)
     ? '<button class="size" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
     : '<button class="size" data-size="' + s + '" aria-pressed="' + (chosenSize === s) + '">' + sizeBtn(s) + '</button>').join('');
@@ -2186,7 +2178,7 @@ function syncAdd(){
   const gone = allGone(current);
   btn.disabled = gone || !chosenSize;
   btn.textContent = gone ? 'Sold out'
-    : chosenSize ? 'Add to bag · ' + rs(current.price) : 'Select a size';
+    : chosenSize ? 'Add to bag' : 'Select a size';
 }
 document.getElementById('mSizes').addEventListener('click', e => {
   const b = e.target.closest('.size'); if (!b) return;
@@ -2308,17 +2300,17 @@ function renderPdp(){
   syncGallery();
   const one = p.sizes.length === 1;
   const crumbCat = document.getElementById('pdpCrumbCat');
-  crumbCat.textContent = p.cat;
+  crumbCat.textContent = (CATS[p.cat] || CATS.all).title;
   crumbCat.setAttribute('href', '#c-' + p.cat);
-  document.getElementById('pdpCrumbName').textContent = p.name;
-  document.getElementById('pdpCat').textContent = p.cat;
   document.getElementById('pdpName').textContent = p.name;
-  document.getElementById('pdpSub').textContent = p.code + ' · ' + p.colour;
+  document.getElementById('pdpSub').textContent = p.colour + ' · ' + p.code;
   document.getElementById('pdpPrice').innerHTML = priceHtml(p);
   document.getElementById('pdpDetails').textContent = detailOf(p);
   const pdpLive = liveSizes(p);
   document.getElementById('pdpSizeLabel').textContent = pdpLive.length === 1 ? 'Size' : 'Select size';
   document.getElementById('pdpStock').textContent = stockLine(p);
+  document.getElementById('pdpSizeBox').hidden = p.sizes[0] === ASK;
+  document.getElementById('pdpQtyRow').hidden = maxQty(p) === 1;
   document.getElementById('pdpSizes').innerHTML = p.sizes.map(s => isOut(p, s)
     ? '<button class="size" disabled aria-label="Size ' + s + ' is sold out">' + s + '</button>'
     : '<button class="size" data-psize="' + s + '" aria-pressed="' + (pdpSize === s) + '">' + sizeBtn(s) + '</button>').join('');
@@ -2327,11 +2319,11 @@ function renderPdp(){
   const pdpGone = allGone(p);
   add.disabled = pdpGone || !pdpSize;
   add.textContent = pdpGone ? 'Sold out'
-    : pdpSize ? 'Add to bag · ' + rs(p.price * pdpQty) : 'Select a size';
+    : pdpSize ? 'Add to bag' : 'Select a size';
   const rel = PRODUCTS.filter(x => x.cat === p.cat && x.code !== p.code).slice(0, 4);
   document.getElementById('pdpRelated').innerHTML = rel.length
     ? rel.map(cardHtml).join('')
-    : '<p class="empty">This is the only piece on this rail right now.</p>';
+    : '<p class="empty">Nothing else in this category right now.</p>';
 }
 
 const coView = document.getElementById('coView');
